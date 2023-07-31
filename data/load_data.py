@@ -3,8 +3,7 @@ import pandas as pd
 
 #LOAD DATA
 
-data_loc = 'data/'
-def get_handwritten_data():
+def get_handwritten_data(data_loc='data/'):
     file_name = "handwritten_obscure_explicit_data.csv"
 
     data = pd.read_csv(data_loc+file_name)
@@ -16,7 +15,7 @@ def get_handwritten_data():
     return data
 
 
-def get_multi_100():
+def get_multi_100(data_loc='data/'):
     file_name = "multi_hop_100.csv"
     multi = pd.read_csv(data_loc+file_name)
     multi = multi.drop([ 'fact1', 'fact2'], axis=1)
@@ -28,7 +27,7 @@ def get_multi_100():
 
     return multi
 
-def get_multi_1000():
+def get_multi_1000(data_loc='data/'):
     file_name = "multi_hop_1000.csv"
     multi_1000 = pd.read_csv(data_loc+file_name)
     multi_1000 = multi_1000.drop([ 'fact1', 'fact2'], axis=1)
