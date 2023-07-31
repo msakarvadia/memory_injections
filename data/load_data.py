@@ -3,7 +3,7 @@ import pandas as pd
 
 #LOAD DATA
 
-data_loc = './'
+data_loc = 'data/'
 def get_handwritten_data():
     file_name = "handwritten_obscure_explicit_data.csv"
 
