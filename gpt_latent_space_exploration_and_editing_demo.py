@@ -21,6 +21,7 @@ Original file is located at
 #from seaborn import heatmap
 
 # Janky code to do different setup when run in a Colab notebook vs VSCode
+'''
 DEVELOPMENT_MODE = False
 try:
     import google.colab
@@ -51,11 +52,12 @@ if IN_COLAB or not DEVELOPMENT_MODE:
 else:
     pio.renderers.default = "notebook_connected"
 print(f"Using renderer: {pio.renderers.default}")
+'''
 
 
-import circuitsvis as cv
+#import circuitsvis as cv
 # Testing that the library works
-cv.examples.hello("Mansi")
+#cv.examples.hello("Mansi")
 
 # Import stuff
 import torch
@@ -81,7 +83,7 @@ import itertools
 from transformers import AutoModelForCausalLM, AutoConfig, AutoTokenizer
 import dataclasses
 import datasets
-from IPython.display import HTML
+#from IPython.display import HTML
 
 import transformer_lens
 import transformer_lens.utils as utils
@@ -528,72 +530,41 @@ print(interpret_logits_as_vocab(gpt2_small, logits))
 print("edited logits")
 print(interpret_logits_as_vocab(gpt2_small, patched_logits))
 
-"""#Get Data"""
+data_loc = 'data/'
+file_name = "handwritten_obscure_explicit_data.csv"
+#data_loc = '/content/drive/MyDrive/Research/Mechanistic Interpretability/data/handwritten_obscure_explicit_data'
 
-from google.colab import auth
-import gspread
-from google.auth import default
-
-#authenticating to google
-auth.authenticate_user()
-creds, _ = default()
-gc = gspread.authorize(creds)
-
-data_loc = '/content/drive/MyDrive/Research/Mechanistic Interpretability/data/handwritten_obscure_explicit_data'
-
-#defining my worksheet
-worksheet = gc.open_by_key('1geAGXLSdJw-SPkSNSODCkF9aBjHAoH4IBX7mWQejm4c').sheet1
-#get_all_values gives a list of rows
-rows = worksheet.get_all_values()
-#Convert to a DataFrame
-data = pd.DataFrame(rows[1:], columns=rows[0])
+data = pd.read_csv(data_loc+file_name)
 data = data.drop(data.columns[[-1]], axis=1)
 data = data[data['answer'] != ""]
 
 for i in range(len(data['answer'])):
   data['answer'][i] = ' '+ data['answer'][i]
 
-data.head()
-# worksheet
+print(data.head())
 
 data['explicit_sentence'][0]
 
-data_loc = '/content/drive/MyDrive/Research/Mechanistic Interpretability/data/handwritten_obscure_explicit_data'
-
-#defining my worksheet
-worksheet = gc.open_by_key('1-7QAQ2-RBikHbst5rPve_TYZRLEVFUlk5fDj2VUBvaQ').sheet1
-#get_all_values gives a list of rows
-rows = worksheet.get_all_values()
-#Convert to a DataFrame
-multi = pd.DataFrame(rows[1:], columns=rows[0])
+file_name = "multi_hop_100.csv"
+multi = pd.read_csv(data_loc+file_name)
 multi = multi.drop([ 'fact1', 'fact2'], axis=1)
 
 #Need to add a " " space to the front of every answer to account for funny tokenization
-
 for i in range(len(multi['answer'])):
   multi['answer'][i] = ' '+ multi['answer'][i]
-
 multi.rename(columns={"explicit_sent": "explicit_sentence", "obscure_sent": "obscure_sentence"}, inplace=True)
 
-multi.head()
-# worksheet
 
 #defining my worksheet
-worksheet = gc.open_by_key('1rdLDEC_I3lo7ACj0mPnDSiyd8nGZDEaYpE57JlkLpeY').sheet1
-#get_all_values gives a list of rows
-rows = worksheet.get_all_values()
-#Convert to a DataFrame
-multi_1000 = pd.DataFrame(rows[1:], columns=rows[0])
+file_name = "multi_hop_1000.csv"
+multi_1000 = pd.read_csv(data_loc+file_name)
 multi_1000 = multi_1000.drop([ 'fact1', 'fact2'], axis=1)
 
 #Need to add a " " space to the front of every answer to account for funny tokenization
-
 for i in range(len(multi_1000['answer'])):
   multi_1000['answer'][i] = ' '+ multi_1000['answer'][i]
 
 multi_1000.rename(columns={"explicit_sent": "explicit_sentence", "obscure_sent": "obscure_sentence"}, inplace=True)
-
-multi_1000.head()
 # worksheet
 
 """# How useful is memory editing at a specific head (if we know what to inject)
