@@ -535,6 +535,8 @@ def print_edit_results(data, model, layer=9, head_num=8, tweak_factor=4):
   print("Average Answer probability difference after edit: ", average_answer_prob_change_after_edit/len(data['answer']))
   return data
 
+print_edit_results(data, gpt2_small)
+
 '''
     Function to compute the probability of the next token (ans) completion
     given the logits or prompt. Either prompt or logits needs to be passed.
