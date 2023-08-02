@@ -1,107 +1,107 @@
-explicit_sentence,obscure_sentence,explicit_entity,obscure_entity,answer,Note
-George Washington fought in the,The first president of the United States fought in the,George Washington,The first president of the United States,Revolutionary War,
-The president lives in the,The leader of the United States lives in the,The president,The leader of the United States,White House,
-St. Peter's Basilica is in the city of,The biggest church in the world is in the city of,St. Peter's Basilica,The biggest church in the world,Rome,
-Jesus died on the,The son of God died on the,Jesus,The son of God,cross,
-Elephants are the largest land mammal on,Animals with long trunks are the largest land mammal on,Elephants,Animals with long trunks,Earth,
-Barack Obama was a member of the,The first black president of the United States was a member of the,Barack Obama,The first black president of the United States,Senate,
-Burj Khalifa is located in the city of,The tallest building in the world is located in the city of,Burj Khalifa,The tallest building in the world,Dubai,
-Mesopotamian civilization originated in the modern-day country of,The oldest civilization originated in the modern-day country of,Mesopotamian civilization,The oldest civilization,Iraq,
-Martin Luther King Jr. delivered the speech during the March on Washington in 1963 widely known as I Had A,The famous Pastor and Civil Rights leader delivered the speech during the March on Washington in 1963 widely known as I Had A,Martin Luther King Jr.,The famous Pastor and Civil Rights leader,Dream,
-The sperm whale dives deep into the ocean to hunt giant,The largest toothed whale dives deep into the ocean to hunt giant,The sperm whale,The largest toothed whale,squid,
-The surface of the Earth is mostly covered in,The surface of the densest planet in the Solar System is mostly covered in,The surface of the Earth,The surface of the densest planet in the Solar System,water,
-Columbus' expedition led to the,The first spanish explorer to land in the Americas' expedition led to the,Columbus' expedition,The first spanish explorer to land in the Americas' expedition,discovery,
-Royce Gracie was born in the country of,The first champion of the UFC was born in the country of,Royce Gracie,The first champion of the UFC,Brazil,
-Enzo Ferrari was a lover of the sport of,Henry Ford's competitor was a lover of the sport of,Enzo Ferrari,Henry Ford's competitor,racing,
-California is the most,The bear flag state is the most,California,The bear flag state,populous,
-California is the most,The golden bear state is the most,California,The golden bear state,populous,
-Hillary Clinton was a candidate for,Bill Clinton's wife was a candidate for,Hillary Clinton,Bill Clinton's wife,president,
-Stephen Hawking worked in the field of,The man who coined the term Hawking Radiation worked in the field of,Stephen Hawking,The man who coined the term Hawking Radiation,quantum,"I am not sure that Hawking coined the term? -- entirely possible, we might redact this prompt anyway due to complexity"
-Lionel Messi is a champion in the game of,The Argentine forward for Barcelona is a champion in the game of,Lionel Messi,The Argentine forward for Barcelona,football,
-Microsoft created the operating system for,Bill Gates' company created the operating system for,Microsoft,Bill Gates' company,Windows,
-James Bond works for the,Agent 007 works for the,James Bond,Agent 007,British,
-Alan Turing devised a way to break the ciphers made from the machine called the,The father of computer science devised a way to break the ciphers made from the machine called the,Alan Turing,The father of computer science,enigma,
-Tim Cook was the CEO of Apple that oversaw the introduction of the Apple,Steve Jobs' successor oversaw the introduction of the Apple,Tim Cook,Steve Jobs' successor,Watch,
-Michael Jackson released the best-selling album of all time which is named,The King of Pop released the best-selling album of all time which is named,Michael Jackson,The King of Pop's,Thriller,
-Chicago is the where the World's Columbian Exposition took place in the year of,The Windy City is where the World's Columbian Exposition took place in the year of,Chicago,The Windy City,1893,what's exactly is the obscure entity here?
-Robespierre executed many of his ideological opponents during the,The architect of the reign of terror executed many of his ideological opponents during the,Robespierre,The architect of the reign of terror,French Revolution,
-Australia has a jumping marsupial animal called a,The big country near New Zealand has a jumping marsupial animal called a,Australia,The big country near New Zealand,Kangaroo,
-Arnold Schwarzenegger was born in the country of,The bodybuilding governor of California was born in the country of,Arnold Schwarzenegger,The bodybuilding governor of California,Austria,
-The largest university in Ohio is called The,The largest university in the Buckeye State is called The,Ohio,The Buckeye State,Ohio State University,
-"Canadians call their $1 coin a ""loonie"" because this type of bird appears on it","Canadians call their $1 coin a ""loonie"" because this type of winged animal appears on it",bird,winged animal,Common Loon,
-The University of Chicago is located in Chicago neighborhood of,The university with the most Nobel Prizes is located in the Chicago neighborhood of,The University of Chicago,The university with the most Nobel Prizes,Hyde Park,
-"Después de las guerras de independencia hispanoamericanas, Simón Bolívar estableció la nación de la","Después de las guerras de independencia hispanoamericanas, el libertador estableció la nación de la",Simon Bolivar,el libertador,Gran Colombia,
-Bill Gates was born in the city of,The founder of Microsoft was born in the city of,Bill Gates,The founder of Microsoft,Seattle,
-Nelson Mandela brought an end to,The first president of South Africa brought an end to,Nelson Mandela,The first president of South Africa,Apartheid,
-Abraham Lincoln issued an executive order famously known as the,The 16th president of the United States issued an executive order famously known as the,Abraham Lincoln,The 16th president of the United States,Emancipation Proclamation,
-The name of Texas' dominating political party is,The name of the Lone Star State's dominating political party is,Texas',Lone Star State's,Republican,
-Russia is mostly located on the continent of,The largest country in the world is mostly located on the continent of,Russia,The largest country in the world,Asia,
-Steve Jobs' father was from the country of,The founder of Apple's father was from the country of,Steve Jobs',The founder of Apple's,Syria,
-J.R.R. Tolkien was afraid of,"The author of ""The Lord of The Rings"" was afraid of",J.R.R. Tolkien,"The author of ""The Lord of The Rings""",spiders,
-Argonne National Laboratory conducted pioneering research on,The U.S.'s first national laboratory conducted pioneering research on,Argonne National Laboratory ,The U.S.'s first national laboratory,nuclear energy,
-"For 25 years, the Sears Tower was the world's","For 25 years, the world's tallest building in 1973 was the world's",Sears Tower,world's tallest building in 1973,tallest building,
-French is the official language of a Canadian province called,A romance language is the official language of a Canadian province called,French,A romance language,Quebec,
-Cain murdered a person named,Adam and Eve's eldest son murdered a person named,Cain,Adam and Eve's eldest son,Abel,
-Napoleon was famously defeated at The Battle of,The Corsican-born leader of the French Republic was famously defeated at The Battle of,Napoleon,The Corsican-born leader of the French Republic,Waterloo,
-Quinine forms a medication used to treat an illness called,Extract from the bark of the cinchona tree forms a medication used to treat an illness called,Quinine,Extract from the bark of the cinchona tree,malaria,
-Hadrian built a wall in the province of,The successor to Antoninus Pius built a wall in the province of,Hadrian,The successor to Antoninus Pius built a wall across,Britannia,
-D-Day took place on the beaches of,The largest seaborne invasion in history took place on the beaches of,D-Day,The largest seaborne invasion in history,Normandy,
-The melting point of water is zero degrees,The melting point of dihydrogen monoxide is zero degrees,water,dihydrogen monoxide,Celsius,
-The highest mountain of the world is called,The tall mountain located at China–Nepal border is called,highest mountain,The tall mountain located at China–Nepal border,Mount Everest,
-Kopi luwak is eaten and defecated by,The most expensive coffee in the world is eaten and defecated by,Kopi luwak,The most expensive coffee in the world,civets,
-Schrodinger's cat is a thought experiment about,Schrodinger's feline laboratory assistant is a thought experiment about,cat,feline laboratory assistant,quantum uncertainty,
-Defibrillation can help end cardiac,A dose of electric countershock to the heart can help end cardiac,Defibrillation,A dose of electric countershock to the heart,arrest,
-A tsunami off the coast of Japan resulted in the nuclear disaster at,A seismic sea wave following an earthquake off the coast of Japan resulted in the nuclear disaster at,tsunami,seismic sea wave following an earthquake,Fukushima Daiichi,
-John F Kennedy was assassinated by a person named,The 35th president of the United States was assassinated by a person named,John F Kennedy,The 35th president of the United States,Lee Harvey Oswald,
-The best-selling song of Queen is called,"The best-selling song of the band comprised of Brian May, Freddie Mercury, Roger Taylor and John Deacon is called",Queen,"The band comprised of Brian May, Freddie Mercury, Roger Taylor and John Deacon",Bohemian Rhapsody,
-William Thomson did important work in the formulation of the first and second laws of,Lord Kelvin did important work in the formulation of the first and second laws of,William Thomson,Lord Kelvin,thermodynamics,
-The real name of the actor and rapper Will Smith is,The real name of the actor and rapper The Fresh Prince is,Will Smith,The Fresh Prince,Willard Carroll Smith II,
-Katy Perry's top album is called,Katheryn Elizabeth Hudson's top album is called,Katy Perry,Katheryn Elizabeth Hudson,Teenage Dream,
-Ernest Gary Gygax died in the town of,The creator of Dungeons & Dragons died in the town of,Ernest Gary Gygax,The creator of Dungeons & Dragons,"Lake Geneva, Wisconsin, U.S.",
-Richard Garfield received a Bachelor of Science degree in the field of,The creator of Magic: The Gathering received a Bachelor of Science degree in field of,Richard Garfield,The creator of Magic: The Gathering,computer mathematics,
-Emperor Vespasian introduced a tax on this bodily fluid,The fourth and last emperor who reigned in the Year of the Four Emperors introduced a tax on this bodily fluid,Emperor Vespasian,The fourth and last emperor who reigned in the Year of the Four Emperors,urin,is this grammatically correct?
-"Ludwig II ruled Bavaria from 1864 until his death in 1886, when he drowned in Lake","Der Märchenkönig ('the Fairy Tale King') ruled Bavaria from 1864 until his death in 1886, when he drowned in Lake",Ludwig II,Der Märchenkönig ('the Fairy Tale King'),"Starnberg, Bavaria, German Empire",
-Alexander the Great was tutored by the philosopher called,The man who conquered most of the known world was tutored by the philosopher called,Alexander the Great,The man who conquered the world,Aristotle,
-Steve Rogers is famous for his,The first avenger is famous for his,Steve Rogers,The first avenger,shield,
-Thomas Jennings invented a method for removing,The first African-American to hold a patent invented a method for removing,Thomas Jennings,The first African-American to hold a patent,dirt and grease from clothing,
-Leonardo da Vinci was born in the modern-day country of,The painter of the Mona Lisa was born in the modern-day country of,Leonardo da Vinci,The painter of the Mona Lisa,Italy,
-Johannes Gutenberg originally trained to become a,The inventor of the printing press originally trained to become a,Johannes Gutenberg,The inventor of the printing press,goldsmith,
-"In addition to being an inventor, Samuel F.B. Morse was also a talented","In addition to being an inventor, the developer of the electrical telegraph was also a talented",Samuel F.B. Morse,the developer of the electrical telegraph,artist,
-The first patented invention of Thomas Alva Edison was the electric,The first patented invention of the inventor of the light bulb was the electric,Thomas Alva Edison,the inventor of the light bulb,vote recorder,
-Nikola Tesla was born in the modern-day country of,The rival of Thomas Alva Edison was born in the modern-day country of,Nikola Tesla,The rival of Thomas Alva Edison,Croatia,
-Nikola Tesla went to the University of,The inventor of the Tesla coin went to the University of,Nikola Tesla,The inventor of the Tesla coin,Graz,
-Nikola Tesla died in the city called,The inventor of the induction motor died in the city called,Nikola Tesla,The inventor of the induction motor,"New York City, U.S.",
-Nikola Tesla studied,The inventor of alternating current studied,Nikola Tesla,The inventor of alternating current,electrical engineering,
-New York City is in the state of,The most populous city in the United States is in the state of,New York City,The most populous city in the United States,New York,
-Michelle Obama was born in the city of,Barack Obama's wife was born in the city of,Michelle Obama,Barack Obama's wife,Chicago,
-Florence Nightingale was born in the city of,The founder of modern nursing was born in the city of,Florence Nightingale,The founder of modern nursing,Florence,
-Hippocrates was from the country of,The father of medicine was from the country of,Hippocrates,The father of medicine,Greece,
-Albert Einstein was known for developing the theory of,The winner of the 1921 Nobel Prize in Physics was known for developing the theory of,Albert Einstein,The winner of the 1921 Nobel Prize in Physics ,relativity,
-James Madison was born in the state of,The father of the Constitution was born in the state of,James Madison,The father of the Constitution,Virgina,
-Charles Babbage was born in the city of,The father of the computer was born in the city of,Charles Babbage,The father of the computer,London,
-Galileo Galilei was born in the city of,The father of the scientific method was born in the city of,Galileo Galilei,The father of the scientific method,Pisa,
-The Taj Mahal was commissioned by,The ivory-white mausoleum in India was commissioned by,The Taj Mahal,The ivory-white mausoleum in India,Shah Jahan,
-The Gateway Arch is located in,The world's tallest arch is located in,The Gateway Arch,The world's tallest arch,St. Louis,
-The Shard is located in the city of,The tallest building in the United Kingdom is located in the city of,The Shard,The tallest building in the United Kingdom,London,
-T. Rex lived on the modern day continent of,The dinosaur with tiny arms lived on the modern day continent of,T. Rex,The dinosaur with tiny arms,North America,
-Bananas grow on,Long yellow berries grow on,Bananas,Long yellow berries,trees,
-"When life gives you limes, make","When life gives you the green version of lemons, make",limes,the green version of lemons,limeade,
-Helen Keller was born in the state of,A deaf and blind disability rights activist was born in the state of,Helen Keller,A deaf and blind disability rights activist,Alabama,
-Mozart was born in the modern day country of,The pianist who composed Twinkle Twinkle Little Star was born in the modern day country of,Mozart,The pianist who composed Twinkle Twinkle Little Star,Austria,
-Beethoven was born in the modern day country of,The pianist who eventually went deaf was born in the modern day country of,Beethoven,The pianist who eventually went deaf,Germany,
-The father of Hermes is,The father of the Greek messenger god is,Hermes,Greek messenger god,Zeus,
-Thor is the son of,The God of Thunder is the son of,Thor,The God of Thunder,Odin,
-New York City is also known as The Big,The most populous city in the United States is also known as The Big,New York City,The most populous city in the United States,Apple,
-Abraham Lincoln succeeded in abolishing,The first president to be assassinated succeeded in abolishing,Abraham Lincoln,The first president to be assassinated,slavery,
-Abraham Lincoln fought in the,The first president to be assassinated fought in the,Abraham Lincoln,The first president to be assassinated,Civil War,
-Medusa could turn people into,The goddess with snakes for hair could turn people into,Medusa,The goddess with snakes for hair,stone,
-Persephone is famous for eating a,The daughter of Demeter is famous for eating a,Persephone,the daughter of Demeter,pomegranate,
-Oedipus married a woman named,The King of Thebes married a woman named,Oedipus,The King of Thebes,Jocasta,
-William Shakespeare was born in the country of,The Bard of Avon was born in the country of,William Shakespeare,The Bard of Avon,England,
-Hercules had a father named,The son of Hera had a father named,Hercules,The son of Hera,Zeus,
-The Great Barrier Reef is located off the coast of the continent of,The largest coral reef system in the world is located off the coast of the continent of,The Great Barrier Reef,The largest coral reef system in the world,Australia,
-The Louvre Museum is located in the city of,The largest art museum in the world is located in the city of,The Louvre Museum,The largest art museum in the world,Paris,
-Mount Everest is located in the,The highest peak in the world is located in the,Mount Everest,The highest peak in the world,Himalayan,
-Mammoth Cave is located in,The longest known cave system is located in ,Mammoth Cave,The longest known cave system,Kentucky,
-The blue whale is a,The largest animal to exist is a,blue whale,largest animal to exist,mammal,
-Jupiter is the largest planet in the solar,The fifth planet from the sun is the largest planet in the solar,Jupiter,The fifth planet from the sun,system,"don't need subject info. to complete ""in the solar system"""
+explicit_sentence,obscure_sentence,explicit_entity,obscure_entity,answer
+George Washington fought in the,The first president of the United States fought in the,George Washington,The first president of the United States,Revolutionary War
+The president lives in the,The leader of the United States lives in the,The president,The leader of the United States,White House
+St. Peter's Basilica is in the city of,The biggest church in the world is in the city of,St. Peter's Basilica,The biggest church in the world,Rome
+Jesus died on the,The son of God died on the,Jesus,The son of God,cross
+Elephants are the largest land mammal on,Animals with long trunks are the largest land mammal on,Elephants,Animals with long trunks,Earth
+Barack Obama was a member of the,The first black president of the United States was a member of the,Barack Obama,The first black president of the United States,Senate
+Burj Khalifa is located in the city of,The tallest building in the world is located in the city of,Burj Khalifa,The tallest building in the world,Dubai
+Mesopotamian civilization originated in the modern-day country of,The oldest civilization originated in the modern-day country of,Mesopotamian civilization,The oldest civilization,Iraq
+Martin Luther King Jr. delivered the speech during the March on Washington in 1963 widely known as I Had A,The famous Pastor and Civil Rights leader delivered the speech during the March on Washington in 1963 widely known as I Had A,Martin Luther King Jr.,The famous Pastor and Civil Rights leader,Dream
+The sperm whale dives deep into the ocean to hunt giant,The largest toothed whale dives deep into the ocean to hunt giant,The sperm whale,The largest toothed whale,squid
+The surface of the Earth is mostly covered in,The surface of the densest planet in the Solar System is mostly covered in,The surface of the Earth,The surface of the densest planet in the Solar System,water
+Columbus' expedition led to the,The first spanish explorer to land in the Americas' expedition led to the,Columbus' expedition,The first spanish explorer to land in the Americas' expedition,discovery
+Royce Gracie was born in the country of,The first champion of the UFC was born in the country of,Royce Gracie,The first champion of the UFC,Brazil
+Enzo Ferrari was a lover of the sport of,Henry Ford's competitor was a lover of the sport of,Enzo Ferrari,Henry Ford's competitor,racing
+California is the most,The bear flag state is the most,California,The bear flag state,populous
+California is the most,The golden bear state is the most,California,The golden bear state,populous
+Hillary Clinton was a candidate for,Bill Clinton's wife was a candidate for,Hillary Clinton,Bill Clinton's wife,president
+Stephen Hawking worked in the field of,The man who coined the term Hawking Radiation worked in the field of,Stephen Hawking,The man who coined the term Hawking Radiation,quantum
+Lionel Messi is a champion in the game of,The Argentine forward for Barcelona is a champion in the game of,Lionel Messi,The Argentine forward for Barcelona,football
+Microsoft created the operating system for,Bill Gates' company created the operating system for,Microsoft,Bill Gates' company,Windows
+James Bond works for the,Agent 007 works for the,James Bond,Agent 007,British
+Alan Turing devised a way to break the ciphers made from the machine called the,The father of computer science devised a way to break the ciphers made from the machine called the,Alan Turing,The father of computer science,enigma
+Tim Cook was the CEO of Apple that oversaw the introduction of the Apple,Steve Jobs' successor oversaw the introduction of the Apple,Tim Cook,Steve Jobs' successor,Watch
+Michael Jackson released the best-selling album of all time which is named,The King of Pop released the best-selling album of all time which is named,Michael Jackson,The King of Pop's,Thriller
+Chicago is the where the World's Columbian Exposition took place in the year of,The Windy City is where the World's Columbian Exposition took place in the year of,Chicago,The Windy City,1893
+Robespierre executed many of his ideological opponents during the,The architect of the reign of terror executed many of his ideological opponents during the,Robespierre,The architect of the reign of terror,French Revolution
+Australia has a jumping marsupial animal called a,The big country near New Zealand has a jumping marsupial animal called a,Australia,The big country near New Zealand,Kangaroo
+Arnold Schwarzenegger was born in the country of,The bodybuilding governor of California was born in the country of,Arnold Schwarzenegger,The bodybuilding governor of California,Austria
+The largest university in Ohio is called The,The largest university in the Buckeye State is called The,Ohio,The Buckeye State,Ohio State University
+"Canadians call their $1 coin a ""loonie"" because this type of bird appears on it","Canadians call their $1 coin a ""loonie"" because this type of winged animal appears on it",bird,winged animal,Common Loon
+The University of Chicago is located in Chicago neighborhood of,The university with the most Nobel Prizes is located in the Chicago neighborhood of,The University of Chicago,The university with the most Nobel Prizes,Hyde Park
+"Después de las guerras de independencia hispanoamericanas, Simón Bolívar estableció la nación de la","Después de las guerras de independencia hispanoamericanas, el libertador estableció la nación de la",Simon Bolivar,el libertador,Gran Colombia
+Bill Gates was born in the city of,The founder of Microsoft was born in the city of,Bill Gates,The founder of Microsoft,Seattle
+Nelson Mandela brought an end to,The first president of South Africa brought an end to,Nelson Mandela,The first president of South Africa,Apartheid
+Abraham Lincoln issued an executive order famously known as the,The 16th president of the United States issued an executive order famously known as the,Abraham Lincoln,The 16th president of the United States,Emancipation Proclamation
+The name of Texas' dominating political party is,The name of the Lone Star State's dominating political party is,Texas',Lone Star State's,Republican
+Russia is mostly located on the continent of,The largest country in the world is mostly located on the continent of,Russia,The largest country in the world,Asia
+Steve Jobs' father was from the country of,The founder of Apple's father was from the country of,Steve Jobs',The founder of Apple's,Syria
+J.R.R. Tolkien was afraid of,"The author of ""The Lord of The Rings"" was afraid of",J.R.R. Tolkien,"The author of ""The Lord of The Rings""",spiders
+Argonne National Laboratory conducted pioneering research on,The U.S.'s first national laboratory conducted pioneering research on,Argonne National Laboratory ,The U.S.'s first national laboratory,nuclear energy
+"For 25 years, the Sears Tower was the world's","For 25 years, the world's tallest building in 1973 was the world's",Sears Tower,world's tallest building in 1973,tallest building
+French is the official language of a Canadian province called,A romance language is the official language of a Canadian province called,French,A romance language,Quebec
+Cain murdered a person named,Adam and Eve's eldest son murdered a person named,Cain,Adam and Eve's eldest son,Abel
+Napoleon was famously defeated at The Battle of,The Corsican-born leader of the French Republic was famously defeated at The Battle of,Napoleon,The Corsican-born leader of the French Republic,Waterloo
+Quinine forms a medication used to treat an illness called,Extract from the bark of the cinchona tree forms a medication used to treat an illness called,Quinine,Extract from the bark of the cinchona tree,malaria
+Hadrian built a wall in the province of,The successor to Antoninus Pius built a wall in the province of,Hadrian,The successor to Antoninus Pius built a wall across,Britannia
+D-Day took place on the beaches of,The largest seaborne invasion in history took place on the beaches of,D-Day,The largest seaborne invasion in history,Normandy
+The melting point of water is zero degrees,The melting point of dihydrogen monoxide is zero degrees,water,dihydrogen monoxide,Celsius
+The highest mountain of the world is called,The tall mountain located at China–Nepal border is called,highest mountain,The tall mountain located at China–Nepal border,Mount Everest
+Kopi luwak is eaten and defecated by,The most expensive coffee in the world is eaten and defecated by,Kopi luwak,The most expensive coffee in the world,civets
+Schrodinger's cat is a thought experiment about,Schrodinger's feline laboratory assistant is a thought experiment about,cat,feline laboratory assistant,quantum uncertainty
+Defibrillation can help end cardiac,A dose of electric countershock to the heart can help end cardiac,Defibrillation,A dose of electric countershock to the heart,arrest
+A tsunami off the coast of Japan resulted in the nuclear disaster at,A seismic sea wave following an earthquake off the coast of Japan resulted in the nuclear disaster at,tsunami,seismic sea wave following an earthquake,Fukushima Daiichi
+John F Kennedy was assassinated by a person named,The 35th president of the United States was assassinated by a person named,John F Kennedy,The 35th president of the United States,Lee Harvey Oswald
+The best-selling song of Queen is called,"The best-selling song of the band comprised of Brian May, Freddie Mercury, Roger Taylor and John Deacon is called",Queen,"The band comprised of Brian May, Freddie Mercury, Roger Taylor and John Deacon",Bohemian Rhapsody
+William Thomson did important work in the formulation of the first and second laws of,Lord Kelvin did important work in the formulation of the first and second laws of,William Thomson,Lord Kelvin,thermodynamics
+The real name of the actor and rapper Will Smith is,The real name of the actor and rapper The Fresh Prince is,Will Smith,The Fresh Prince,Willard Carroll Smith II
+Katy Perry's top album is called,Katheryn Elizabeth Hudson's top album is called,Katy Perry,Katheryn Elizabeth Hudson,Teenage Dream
+Ernest Gary Gygax died in the town of,The creator of Dungeons & Dragons died in the town of,Ernest Gary Gygax,The creator of Dungeons & Dragons,"Lake Geneva, Wisconsin, U.S."
+Richard Garfield received a Bachelor of Science degree in the field of,The creator of Magic: The Gathering received a Bachelor of Science degree in field of,Richard Garfield,The creator of Magic: The Gathering,computer mathematics
+Emperor Vespasian introduced a tax on this bodily fluid,The fourth and last emperor who reigned in the Year of the Four Emperors introduced a tax on this bodily fluid,Emperor Vespasian,The fourth and last emperor who reigned in the Year of the Four Emperors,urin
+"Ludwig II ruled Bavaria from 1864 until his death in 1886, when he drowned in Lake","Der Märchenkönig ('the Fairy Tale King') ruled Bavaria from 1864 until his death in 1886, when he drowned in Lake",Ludwig II,Der Märchenkönig ('the Fairy Tale King'),"Starnberg, Bavaria, German Empire"
+Alexander the Great was tutored by the philosopher called,The man who conquered most of the known world was tutored by the philosopher called,Alexander the Great,The man who conquered the world,Aristotle
+Steve Rogers is famous for his,The first avenger is famous for his,Steve Rogers,The first avenger,shield
+Thomas Jennings invented a method for removing,The first African-American to hold a patent invented a method for removing,Thomas Jennings,The first African-American to hold a patent,dirt and grease from clothing
+Leonardo da Vinci was born in the modern-day country of,The painter of the Mona Lisa was born in the modern-day country of,Leonardo da Vinci,The painter of the Mona Lisa,Italy
+Johannes Gutenberg originally trained to become a,The inventor of the printing press originally trained to become a,Johannes Gutenberg,The inventor of the printing press,goldsmith
+"In addition to being an inventor, Samuel F.B. Morse was also a talented","In addition to being an inventor, the developer of the electrical telegraph was also a talented",Samuel F.B. Morse,the developer of the electrical telegraph,artist
+The first patented invention of Thomas Alva Edison was the electric,The first patented invention of the inventor of the light bulb was the electric,Thomas Alva Edison,the inventor of the light bulb,vote recorder
+Nikola Tesla was born in the modern-day country of,The rival of Thomas Alva Edison was born in the modern-day country of,Nikola Tesla,The rival of Thomas Alva Edison,Croatia
+Nikola Tesla went to the University of,The inventor of the Tesla coin went to the University of,Nikola Tesla,The inventor of the Tesla coin,Graz
+Nikola Tesla died in the city called,The inventor of the induction motor died in the city called,Nikola Tesla,The inventor of the induction motor,"New York City, U.S."
+Nikola Tesla studied,The inventor of alternating current studied,Nikola Tesla,The inventor of alternating current,electrical engineering
+New York City is in the state of,The most populous city in the United States is in the state of,New York City,The most populous city in the United States,New York
+Michelle Obama was born in the city of,Barack Obama's wife was born in the city of,Michelle Obama,Barack Obama's wife,Chicago
+Florence Nightingale was born in the city of,The founder of modern nursing was born in the city of,Florence Nightingale,The founder of modern nursing,Florence
+Hippocrates was from the country of,The father of medicine was from the country of,Hippocrates,The father of medicine,Greece
+Albert Einstein was known for developing the theory of,The winner of the 1921 Nobel Prize in Physics was known for developing the theory of,Albert Einstein,The winner of the 1921 Nobel Prize in Physics ,relativity
+James Madison was born in the state of,The father of the Constitution was born in the state of,James Madison,The father of the Constitution,Virgina
+Charles Babbage was born in the city of,The father of the computer was born in the city of,Charles Babbage,The father of the computer,London
+Galileo Galilei was born in the city of,The father of the scientific method was born in the city of,Galileo Galilei,The father of the scientific method,Pisa
+The Taj Mahal was commissioned by,The ivory-white mausoleum in India was commissioned by,The Taj Mahal,The ivory-white mausoleum in India,Shah Jahan
+The Gateway Arch is located in,The world's tallest arch is located in,The Gateway Arch,The world's tallest arch,St. Louis
+The Shard is located in the city of,The tallest building in the United Kingdom is located in the city of,The Shard,The tallest building in the United Kingdom,London
+T. Rex lived on the modern day continent of,The dinosaur with tiny arms lived on the modern day continent of,T. Rex,The dinosaur with tiny arms,North America
+Bananas grow on,Long yellow berries grow on,Bananas,Long yellow berries,trees
+"When life gives you limes, make","When life gives you the green version of lemons, make",limes,the green version of lemons,limeade
+Helen Keller was born in the state of,A deaf and blind disability rights activist was born in the state of,Helen Keller,A deaf and blind disability rights activist,Alabama
+Mozart was born in the modern day country of,The pianist who composed Twinkle Twinkle Little Star was born in the modern day country of,Mozart,The pianist who composed Twinkle Twinkle Little Star,Austria
+Beethoven was born in the modern day country of,The pianist who eventually went deaf was born in the modern day country of,Beethoven,The pianist who eventually went deaf,Germany
+The father of Hermes is,The father of the Greek messenger god is,Hermes,Greek messenger god,Zeus
+Thor is the son of,The God of Thunder is the son of,Thor,The God of Thunder,Odin
+New York City is also known as The Big,The most populous city in the United States is also known as The Big,New York City,The most populous city in the United States,Apple
+Abraham Lincoln succeeded in abolishing,The first president to be assassinated succeeded in abolishing,Abraham Lincoln,The first president to be assassinated,slavery
+Abraham Lincoln fought in the,The first president to be assassinated fought in the,Abraham Lincoln,The first president to be assassinated,Civil War
+Medusa could turn people into,The goddess with snakes for hair could turn people into,Medusa,The goddess with snakes for hair,stone
+Persephone is famous for eating a,The daughter of Demeter is famous for eating a,Persephone,the daughter of Demeter,pomegranate
+Oedipus married a woman named,The King of Thebes married a woman named,Oedipus,The King of Thebes,Jocasta
+William Shakespeare was born in the country of,The Bard of Avon was born in the country of,William Shakespeare,The Bard of Avon,England
+Hercules had a father named,The son of Hera had a father named,Hercules,The son of Hera,Zeus
+The Great Barrier Reef is located off the coast of the continent of,The largest coral reef system in the world is located off the coast of the continent of,The Great Barrier Reef,The largest coral reef system in the world,Australia
+The Louvre Museum is located in the city of,The largest art museum in the world is located in the city of,The Louvre Museum,The largest art museum in the world,Paris
+Mount Everest is located in the,The highest peak in the world is located in the,Mount Everest,The highest peak in the world,Himalayan
+Mammoth Cave is located in,The longest known cave system is located in ,Mammoth Cave,The longest known cave system,Kentucky
+The blue whale is a,The largest animal to exist is a,blue whale,largest animal to exist,mammal
+Jupiter is the largest planet in the solar,The fifth planet from the sun is the largest planet in the solar,Jupiter,The fifth planet from the sun,system
