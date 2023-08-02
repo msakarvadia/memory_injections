@@ -892,16 +892,16 @@ def tweak_factor_vary(tweak_factors, data, model=gpt2_small, layers=12, title="g
 
     data_cp.to_csv(data_loc+full_title)
 
-#tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-#tweak_factor_vary(tweak_factors, data, gpt2_small, 12, title="gpt2_small_subject_edits_hand")
+tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+tweak_factor_vary(tweak_factors, data, gpt2_small, 12, title="gpt2_small_subject_edits_hand")
 
-#tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-#tweak_factor_vary(tweak_factors, data, gpt2_large, 36, title="gpt2_large_subject_edits_hand")
+tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+tweak_factor_vary(tweak_factors, data, gpt2_large, 36, title="gpt2_large_subject_edits_hand")
 
 #tweak_factors = [6,7,8,9,10,11,12,13,14,15]
 #tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
 #tweak_factor_vary(tweak_factors, multi_1000, gpt2_small, 12, title="gpt2_small_subject_edits_2wmh")
 
-tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-tweak_factor_vary(tweak_factors, multi_1000, gpt2_large, 36, title="gpt2_large_subject_edits_2wmh")
+#tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+#tweak_factor_vary(tweak_factors, multi_1000, gpt2_large, 36, title="gpt2_large_subject_edits_2wmh")
 

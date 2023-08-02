@@ -7,7 +7,8 @@ def get_handwritten_data(data_loc='data/'):
     file_name = "handwritten_obscure_explicit_data.csv"
 
     data = pd.read_csv(data_loc+file_name)
-    data = data.drop(data.columns[[-1]], axis=1)
+    print(data.columns)
+    #data = data.drop(data.columns[[-1]], axis=1)
     data = data[data['answer'] != ""]
 
     for i in range(len(data['answer'])):
