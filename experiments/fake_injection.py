@@ -1,6 +1,6 @@
 import sys
 sys.path.append("../")
-from data.load_data import get_handwritten_data, get_multi_100, get_multi_1000
+from data.load_data import get_top_words, get_handwritten_data, get_multi_100, get_multi_1000
 
 # Import stuff
 import torch
@@ -34,17 +34,21 @@ from transformer_lens.hook_points import (
 from transformer_lens import HookedTransformer, HookedTransformerConfig, FactoredMatrix, ActivationCache
 import matplotlib.pyplot as plt
 
+torch.cuda.empty_cache()
 torch.set_grad_enabled(False)
 
 #Get Data
 data = get_handwritten_data('../data/')
 multi = get_multi_100('../data/')
 multi_1000 = get_multi_1000('../data/')
+top_words = get_multi_1000('../data/')
+top_words = get_multi_1000('../data/')
 
 
 """# Get Models"""
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
+device = "cpu"
 
 gpt2_small = HookedTransformer.from_pretrained("gpt2-small", device=device)
 gpt2_large = HookedTransformer.from_pretrained("gpt2-large", device=device)
@@ -202,9 +206,9 @@ def fake_injections(data=data, model=gpt2_small, layer=6, k=30, tweak_factor=4, 
   return data_cp
 
 
-data_cp = fake_injections(data=data, model=gpt2_small, layer=9, k=30, tweak_factor=4, full_title="GPT2_small_hand_fake_inject_layer9_tweak4.csv")
+#data_cp = fake_injections(data=data, model=gpt2_small, layer=8, k=30, tweak_factor=4, full_title="GPT2_small_hand_fake_inject_layer9_tweak4.csv")
 
-data_cp = fake_injections(data=data, model=gpt2_large, layer=14, k=30, tweak_factor=10, full_title="GPT2_large_hand_fake_inject_layer14_tweak10.csv")
+#data_cp = fake_injections(data=data, model=gpt2_large, layer=14, k=30, tweak_factor=10, full_title="GPT2_large_hand_fake_inject_layer14_tweak10.csv")
 
-#data_cp = fake_injections(data=multi_1000, model=gpt2_small, layer=8, k=30, tweak_factor=4, full_title="GPT2_small_2wmh_fake_inject_layer8_tweak4.csv")
+data_cp = fake_injections(data=multi_1000, model=gpt2_small, layer=8, k=30, tweak_factor=4, full_title="GPT2_small_2wmh_fake_inject_layer8_tweak4.csv")
 
