@@ -105,12 +105,11 @@ def apply_edit(model, extra_memory, prompt, tweak_factor=4, layer=10, head_num=0
                         tweak_factor=tweak_factor,
                         head_num=head_num)
 
-  #prompt = "The first black president of the United States was a member of the"
   #Get original logits
   logits = model(prompt)
 
   #Get patched Logits
-  layer  = layer
+  #layer  = layer
   patched_logits = model.run_with_hooks(prompt,
                             fwd_hooks=[
                                         ( utils.get_act_name("result", layer),
@@ -174,8 +173,6 @@ def fake_injections(data=data, model=gpt2_small, layer=6, k=30, tweak_factor=4, 
                                           layer=layer,
                                           head_num=h)
 
-        #print("Diff between logits and patched logits: ", logits==patched_logits)
-
         first_answer_tok = model.to_tokens(answer, prepend_bos=False)[0][0].item()
         answer_prob_after_mem = torch.nn.functional.softmax(patched_logits[0][-1], dim=0)[first_answer_tok]
         data_cp.loc[i, subject_answer_edit] = answer_prob_after_mem.item()
@@ -184,16 +181,18 @@ def fake_injections(data=data, model=gpt2_small, layer=6, k=30, tweak_factor=4, 
         vals, idx = torch.topk(patched_logits[0][-1], k)
         data_cp.at[i, subject_top_k]= idx.tolist()
 
-
         if counter == 0:
           answer_prob_before_mem = torch.nn.functional.softmax(logits[0][-1], dim=0)[first_answer_tok]
           data_cp.loc[i, 'answer_prob_obs'] = answer_prob_before_mem.item()
           explicit_ans_prob = get_ans_prob(model, answer, explicit_prompt)
-          print(explicit_prompt)
-          print(answer)
-          print("explicit prob", explicit_ans_prob)
-          print("edit prob: ", answer_prob_after_mem)
           data_cp.loc[i, 'answer_prob_exp'] = get_ans_prob(model, answer, explicit_prompt)
+
+        print("explicit prompt: ", explicit_prompt)
+        print("obscure prompt: ", prompt)
+        print("memory: ", s)
+        print("answer: ", answer)
+        print("explicit prob", explicit_ans_prob)
+        print("edit prob: ", answer_prob_after_mem)
 
       counter+=1
 
