@@ -14,13 +14,10 @@ from fancy_einsum import einsum
 import tqdm.auto as tqdm
 import random
 from pathlib import Path
-import plotly.express as px
 from torch.utils.data import DataLoader
 
 from jaxtyping import Float, Int
-from typing import List, Union, Optional
 from functools import partial
-import copy
 
 import itertools
 from transformers import AutoModelForCausalLM, AutoConfig, AutoTokenizer
