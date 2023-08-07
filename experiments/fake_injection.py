@@ -1,6 +1,6 @@
 import sys
 sys.path.append("../")
-from data.load_data import get_handwritten_data, get_multi_100, get_multi_1000
+from data.load_data import get_top_words, get_handwritten_data, get_multi_100, get_multi_1000
 
 # Import stuff
 import torch
@@ -34,17 +34,22 @@ from transformer_lens.hook_points import (
 from transformer_lens import HookedTransformer, HookedTransformerConfig, FactoredMatrix, ActivationCache
 import matplotlib.pyplot as plt
 
+torch.cuda.empty_cache()
 torch.set_grad_enabled(False)
 
 #Get Data
 data = get_handwritten_data('../data/')
 multi = get_multi_100('../data/')
 multi_1000 = get_multi_1000('../data/')
+top_words = get_multi_1000('../data/')
+top_words = get_top_words('../data/')
 
+print(top_words)
 
 """# Get Models"""
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
+device = "cpu"
 
 gpt2_small = HookedTransformer.from_pretrained("gpt2-small", device=device)
 gpt2_large = HookedTransformer.from_pretrained("gpt2-large", device=device)
@@ -137,16 +142,38 @@ def get_ans_prob(model, ans, prompt=None, logits=None):
     return total_ans_prob
 
 
-def fake_injections(data=data, model=gpt2_small, layer=6, k=30, tweak_factor=4, full_title="GPT2_small_hand_fake_inject.csv"):
+def fake_injections(data=data, top_words=top_words, fake_data_type="adjectives" , model=gpt2_small, layer=6, k=30, tweak_factor=4, full_title="GPT2_small_hand_fake_inject.csv"):
   data_cp = data.copy()
   data_cp['answer_prob_exp'] = 0
   data_cp['answer_prob_obs'] = 0
   num_data_points = len(data['answer'])
+
   subjects = list(data['explicit_entity'])
+  top_5000 = list(top_words['Top 5000 Words'])
+  nouns = list(top_words['Nouns'])
+  verbs = list(top_words['Verbs'])
+  adjectives = list(top_words['Adjectives'])
+  adverbs = list(top_words['Adverbs'])
+  conjunctions = list(top_words['Conjunctions'])
+
+  if fake_data_type=="subject":
+    words=subjects
+  if fake_data_type=="top_5000":
+    words=top_5000
+  if fake_data_type=="nouns":
+    words=nouns
+  if fake_data_type=="verbs":
+    words=verbs
+  if fake_data_type=="adjectives":
+    words=adjectives
+  if fake_data_type=="adverbs":
+    words=adverbs
+  if fake_data_type=="conjunctions":
+    words=conjections
 
 
   counter = 0
-  for s in subjects:
+  for s in words:
 
       print("subject: ", s)
       subject_answer_edit = 'ans_prob_obs_edit_subject_'+s
@@ -202,9 +229,9 @@ def fake_injections(data=data, model=gpt2_small, layer=6, k=30, tweak_factor=4, 
   return data_cp
 
 
-data_cp = fake_injections(data=data, model=gpt2_small, layer=9, k=30, tweak_factor=4, full_title="GPT2_small_hand_fake_inject_layer9_tweak4.csv")
+#data_cp = fake_injections(data=data, top_words=top_words, model=gpt2_small, layer=8, k=30, tweak_factor=4, full_title="GPT2_small_hand_fake_inject_layer9_tweak4.csv")
 
-data_cp = fake_injections(data=data, model=gpt2_large, layer=14, k=30, tweak_factor=10, full_title="GPT2_large_hand_fake_inject_layer14_tweak10.csv")
+#data_cp = fake_injections(data=data, top_words=top_words, model=gpt2_large, layer=14, k=30, tweak_factor=10, full_title="GPT2_large_hand_fake_inject_layer14_tweak10.csv")
 
-#data_cp = fake_injections(data=multi_1000, model=gpt2_small, layer=8, k=30, tweak_factor=4, full_title="GPT2_small_2wmh_fake_inject_layer8_tweak4.csv")
+data_cp = fake_injections(data=multi_1000, top_words=top_words, model=gpt2_small, layer=8, k=30, tweak_factor=4, full_title="GPT2_small_2wmh_fake_inject_layer8_tweak4.csv")
 
