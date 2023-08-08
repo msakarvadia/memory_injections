@@ -142,7 +142,7 @@ def get_ans_prob(model, ans, prompt=None, logits=None):
     return total_ans_prob
 
 
-def fake_injections(data=data, top_words=top_words, fake_data_type="adjectives" , model=gpt2_small, layer=6, k=30, tweak_factor=4, full_title="GPT2_small_hand_fake_inject.csv"):
+def fake_injections(data=data, top_words=top_words, fake_data_type="conjunctions" , model=gpt2_small, layer=6, k=30, tweak_factor=4, full_title="GPT2_small_hand_fake_inject.csv"):
   data_cp = data.copy()
   data_cp['answer_prob_exp'] = 0
   data_cp['answer_prob_obs'] = 0
@@ -169,7 +169,7 @@ def fake_injections(data=data, top_words=top_words, fake_data_type="adjectives" 
   if fake_data_type=="adverbs":
     words=adverbs
   if fake_data_type=="conjunctions":
-    words=conjections
+    words=conjunctions
 
 
   counter = 0
@@ -231,7 +231,9 @@ def fake_injections(data=data, top_words=top_words, fake_data_type="adjectives" 
 
 #data_cp = fake_injections(data=data, top_words=top_words, model=gpt2_small, layer=8, k=30, tweak_factor=4, full_title="GPT2_small_hand_fake_inject_layer9_tweak4.csv")
 
-#data_cp = fake_injections(data=data, top_words=top_words, model=gpt2_large, layer=14, k=30, tweak_factor=10, full_title="GPT2_large_hand_fake_inject_layer14_tweak10.csv")
+#data_cp = fake_injections(data=data, top_words=top_words, model=gpt2_large, layer=14, k=30, tweak_factor=9, full_title="GPT2_large_hand_fake_inject_layer14_tweak10.csv")
 
-data_cp = fake_injections(data=multi_1000, top_words=top_words, model=gpt2_small, layer=8, k=30, tweak_factor=4, full_title="GPT2_small_2wmh_fake_inject_layer8_tweak4.csv")
+#data_cp = fake_injections(data=multi_1000, top_words=top_words, model=gpt2_small, layer=8, k=30, tweak_factor=4, full_title="GPT2_small_2wmh_fake_inject_layer8_tweak4.csv")
+
+data_cp = fake_injections(data=multi_1000, top_words=top_words, model=gpt2_large, layer=4, k=30, tweak_factor=8, full_title="GPT2_small_2wmh_fake_inject_layer8_tweak4.csv")
 
