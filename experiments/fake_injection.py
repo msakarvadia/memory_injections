@@ -142,19 +142,19 @@ def get_ans_prob(model, ans, prompt=None, logits=None):
     return total_ans_prob
 
 
-def fake_injections(data=data, top_words=top_words, fake_data_type="conjunctions" , model=gpt2_small, layer=6, k=30, tweak_factor=4, full_title="GPT2_small_hand_fake_inject.csv"):
+def fake_injections(data=data, top_words=top_words, fake_data_type="conjunctions", limit=200, model=gpt2_small, layer=6, k=30, tweak_factor=4, full_title="GPT2_small_hand_fake_inject.csv"):
   data_cp = data.copy()
   data_cp['answer_prob_exp'] = 0
   data_cp['answer_prob_obs'] = 0
   num_data_points = len(data['answer'])
 
   subjects = list(data['explicit_entity'])
-  top_5000 = list(top_words['Top 5000 Words'])
-  nouns = list(top_words['Nouns'])
-  verbs = list(top_words['Verbs'])
-  adjectives = list(top_words['Adjectives'])
-  adverbs = list(top_words['Adverbs'])
-  conjunctions = list(top_words['Conjunctions'])
+  top_5000 = top_words['Top 5000 Words'].dropna().head(limit).tolist()
+  nouns = top_words['Nouns'].dropna().head(limit).tolist()
+  verbs = top_words['Verbs'].dropna().head(limit).tolist()
+  adjectives = top_words['Adjectives'].dropna().head(limit).tolist()
+  adverbs = top_words['Adverbs'].dropna().head(limit).tolist()
+  conjunctions = top_words['Conjunctions'].dropna().tolist()
 
   if fake_data_type=="subject":
     words=subjects
@@ -214,12 +214,12 @@ def fake_injections(data=data, top_words=top_words, fake_data_type="conjunctions
           explicit_ans_prob = get_ans_prob(model, answer, explicit_prompt)
           data_cp.loc[i, 'answer_prob_exp'] = get_ans_prob(model, answer, explicit_prompt)
 
-        print("explicit prompt: ", explicit_prompt)
-        print("obscure prompt: ", prompt)
-        print("memory: ", s)
-        print("answer: ", answer)
-        print("explicit prob", explicit_ans_prob)
-        print("edit prob: ", answer_prob_after_mem)
+        #print("explicit prompt: ", explicit_prompt)
+        #print("obscure prompt: ", prompt)
+        #print("memory: ", s)
+        #print("answer: ", answer)
+        #print("explicit prob", explicit_ans_prob)
+        #print("edit prob: ", answer_prob_after_mem)
 
       counter+=1
 
@@ -235,5 +235,13 @@ def fake_injections(data=data, top_words=top_words, fake_data_type="conjunctions
 
 #data_cp = fake_injections(data=multi_1000, top_words=top_words, model=gpt2_small, layer=8, k=30, tweak_factor=4, full_title="GPT2_small_2wmh_fake_inject_layer8_tweak4.csv")
 
-data_cp = fake_injections(data=multi_1000, top_words=top_words, model=gpt2_large, layer=4, k=30, tweak_factor=8, full_title="GPT2_small_2wmh_fake_inject_layer8_tweak4.csv")
+#data_cp = fake_injections(data=multi_1000, top_words=top_words, model=gpt2_large, layer=4, k=30, tweak_factor=8, full_title="GPT2_small_2wmh_fake_inject_layer8_tweak4.csv")
+
+#gpt2 large, 2wmh, layer 4, tweak 8
+#gpt2 large, hand, layer 14, tweak 9
+#gpt2 small, 2wmh, layer 8, tweak 4
+#gpt2 small, hand, layer  7 , tweak 3
+
+data_cp = fake_injections(data=data, top_words=top_words, fake_data_type="conjunctions", model=gpt2_small, layer=7, k=30,
+                          tweak_factor=3, full_title="GPT2_small_hand_fake_inject_layer7_tweak3_conjunctions.csv")
 
