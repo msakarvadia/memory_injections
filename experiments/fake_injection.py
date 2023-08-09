@@ -242,6 +242,11 @@ def fake_injections(data=data, top_words=top_words, fake_data_type="conjunctions
 #gpt2 small, 2wmh, layer 8, tweak 4
 #gpt2 small, hand, layer  7 , tweak 3
 
-data_cp = fake_injections(data=data, top_words=top_words, fake_data_type="conjunctions", model=gpt2_small, layer=7, k=30,
-                          tweak_factor=3, full_title="GPT2_small_hand_fake_inject_layer7_tweak3_conjunctions.csv")
+#data_cp = fake_injections(data=data, top_words=top_words, fake_data_type="conjunctions", model=gpt2_small, layer=7, k=30,
+#                          tweak_factor=3, full_title="GPT2_small_hand_fake_inject_layer7_tweak3_conjunctions.csv")
 
+fake_data_types = ["top_5000", "nouns", "verbs", "adjectives", "adverbs", "conjunctions"]
+
+for fake_data_type in fake_data_types:
+    fake_injections(data=data, top_words=top_words, fake_data_type=fake_data_type, model=gpt2_large, layer=14, k=30,
+                    tweak_factor=9, full_title=f"GPT2_large_hand_fake_inject_layer14_tweak9_{fake_data_type}.csv")
