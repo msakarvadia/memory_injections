@@ -62,15 +62,11 @@ def edit_heatmap(data, model, layers=12, heads=1, tweak_factor=4, k=30, print_ou
 
 
   for l in range(layers):
-      #print("layer: ", l)
       layer_answer_edit = 'ans_prob_obs_edit_layer'+str(l)
       layer_top_k = 'topk_tok_obs_edit_layer'+str(l)
-      #print(string)
       data_cp[layer_answer_edit] = 0
       data_cp[layer_top_k] = ''
       data_cp[layer_top_k] = data_cp[layer_top_k].apply(list)
-      #print("here")
-      #average_answer_prob_change_after_edit = 0
 
     #for h in range(heads):
       # this is a hacky way to hold the head number constant at head 0, bc it doesn't matter which head we inject into since they all get concatenated anyway
@@ -87,25 +83,18 @@ def edit_heatmap(data, model, layers=12, heads=1, tweak_factor=4, k=30, print_ou
                                           layer=l,
                                           head_num=h)
 
-        #print("Diff between logits and patched logits: ", logits==patched_logits)
         first_answer_tok = model.to_tokens(answer, prepend_bos=False)[0][0].item()
         answer_prob_before_mem = torch.nn.functional.softmax(logits[0][-1], dim=0)[first_answer_tok]
-
         answer_prob_after_mem = torch.nn.functional.softmax(patched_logits[0][-1], dim=0)[first_answer_tok]
-
-
 
         if l == 0:
           data_cp.loc[i, 'answer_prob_obs'] = answer_prob_before_mem.item()
-          #explicit_ans_prob = get_ans_prob(model, answer, explicit_prompt)
           data_cp.loc[i, 'answer_prob_exp'] = get_ans_prob(model, answer, explicit_prompt)
 
         data_cp.loc[i, layer_answer_edit] = answer_prob_after_mem.item()
 
-
         vals, idx = torch.topk(patched_logits[0][-1], k)
         data_cp.at[i, layer_top_k]= idx.tolist()
-        #data_cp.at[i, layer_top_k].append( idx.tolist())
 
         #print(i)
       if(print_output):
@@ -114,8 +103,6 @@ def edit_heatmap(data, model, layers=12, heads=1, tweak_factor=4, k=30, print_ou
         print("Average Answer Probability before edit: ", data_cp['answer_prob_obs'].mean())
         print("Average Answer probability difference after edit: ", (data_cp[layer_answer_edit] -data_cp['answer_prob_obs']).mean())
         print("Average Percent increase in Answer probability difference after edit: ", ((data_cp[layer_answer_edit] -data_cp['answer_prob_obs'])/ data_cp['answer_prob_obs']).mean() * 100)
-        #print("Median Percent increase in Answer probability difference after edit: ", median_percent_difference * 100)
-
 
   return data_cp
 
