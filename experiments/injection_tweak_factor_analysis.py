@@ -47,14 +47,6 @@ gpt2_large = HookedTransformer.from_pretrained("gpt2-large", device=device)
 prompt = "George Washington fought in the"
 head_latent_space_projector(gpt2_small, prompt, 10, 12, aggregate_heads=True, intermediate_tokens=True)
 
-prompt = "The first president of the United States fought in the"
-head_latent_space_projector(gpt2_small, prompt, 10, 12, aggregate_heads=True, intermediate_tokens=True)
-
-prompt = "The first president of the United States fought in the"
-head_latent_space_projector(gpt2_large, prompt, 10, 20, aggregate_heads=False, intermediate_tokens=False)
-
-
-
 #Get Data
 data = get_handwritten_data('../data/')
 multi = get_multi_100('../data/')
