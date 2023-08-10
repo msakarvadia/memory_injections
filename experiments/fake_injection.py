@@ -33,9 +33,18 @@ from transformer_lens.hook_points import (
 )  # Hooking utilities
 from transformer_lens import HookedTransformer, HookedTransformerConfig, FactoredMatrix, ActivationCache
 import matplotlib.pyplot as plt
+import argparse
 
 torch.cuda.empty_cache()
 torch.set_grad_enabled(False)
+
+#Set up arg parser
+parser = argparse.ArgumentParser()
+parser.add_argument("--tweak_factor", default=3, type=int)
+parser.add_argument("--layer_number", default=7, type=int)
+parser.add_argument("--dataset", default="hand",choices=["hand", "2wmh"],  type=str)
+parser.add_argument("--model", default="gpt2-small", choices=["gpt2-small", "gpt2-large"],  type=str)
+args = parser.parse_args()
 
 #Get Data
 data = get_handwritten_data('../data/')
@@ -51,10 +60,11 @@ print(top_words)
 device = "cuda" if torch.cuda.is_available() else "cpu"
 device = "cpu"
 
-gpt2_small = HookedTransformer.from_pretrained("gpt2-small", device=device)
-gpt2_large = HookedTransformer.from_pretrained("gpt2-large", device=device)
-gpt2_small.cfg.use_attn_result = True
-gpt2_large.cfg.use_attn_result = True
+if(args.model == "gpt2-small"):
+    model = HookedTransformer.from_pretrained("gpt2-small", device=device)
+else:
+    model = HookedTransformer.from_pretrained("gpt2-large", device=device)
+model.cfg.use_attn_result = True
 
 def memory_tweaker_head_hook(
     attn_result: Float[torch.Tensor, "num_tokens num_heads d_model"],
@@ -142,7 +152,9 @@ def get_ans_prob(model, ans, prompt=None, logits=None):
     return total_ans_prob
 
 
-def fake_injections(data=data, top_words=top_words, fake_data_type="conjunctions", limit=200, model=gpt2_small, layer=6, k=30, tweak_factor=4, full_title="GPT2_small_hand_fake_inject.csv"):
+def fake_injections(data=data, top_words=top_words, fake_data_type="conjunctions", limit=200, model=model, layer=6, k=30, tweak_factor=4, full_title="GPT2_small_hand_fake_inject.csv"):
+
+  print("Experiment: ", full_title)
   data_cp = data.copy()
   data_cp['answer_prob_exp'] = 0
   data_cp['answer_prob_obs'] = 0
@@ -248,5 +260,11 @@ def fake_injections(data=data, top_words=top_words, fake_data_type="conjunctions
 fake_data_types = ["top_5000", "nouns", "verbs", "adjectives", "adverbs", "conjunctions"]
 
 for fake_data_type in fake_data_types:
-    fake_injections(data=data, top_words=top_words, fake_data_type=fake_data_type, model=gpt2_large, layer=14, k=30,
-                    tweak_factor=9, full_title=f"GPT2_large_hand_fake_inject_layer14_tweak9_{fake_data_type}.csv")
+    fake_injections(data=data, 
+                    top_words=top_words, 
+                    fake_data_type=fake_data_type, 
+                    model=model, 
+                    layer=args.layer_number, 
+                    k=30,
+                    tweak_factor=args.tweak_factor,
+                     full_title=f"{args.model}_{args.dataset}_fake_inject_layer{args.layer_number}_tweak{args.tweak_factor}_{fake_data_type}.csv")
