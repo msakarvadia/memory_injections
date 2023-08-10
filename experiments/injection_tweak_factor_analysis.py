@@ -1,7 +1,7 @@
 import sys
 sys.path.append("../")
 from data.load_data import get_handwritten_data, get_multi_100, get_multi_1000
-from utils import reject_outliers, get_ans_prob, apply_edit, memory_tweaker_head_hook
+from utils import reject_outliers, get_ans_prob, apply_edit, memory_tweaker_head_hook, head_latent_space_projector
 
 # Import stuff
 import torch
@@ -43,77 +43,6 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 
 gpt2_small = HookedTransformer.from_pretrained("gpt2-small", device=device)
 gpt2_large = HookedTransformer.from_pretrained("gpt2-large", device=device)
-
-
-
-def head_latent_space_projector(model, prompt, k_tokens, num_heads, aggregate_heads=True, intermediate_tokens=True):
-  # TODO: implement a way to turn off intermediate_tokens (for the sake of truncating output)
-  # intermediate_tokens = boolean arg that specifies if we want to the projections for all intermediate tokens as well, not just the last one
-
-  #This is how you change the amount of heads that are cached
-  model.cfg.use_attn_result = True
-
-  #tokenize the prompt
-  tokens = model.to_tokens(prompt)
-  logits, cache = model.run_with_cache(tokens, remove_batch_dim=True)
-
-  if aggregate_heads:
-
-    for l in cache:
-      if "hook_attn_out" in l:
-        #Get the aggregate head info for a particular layer, and apply a layer norm
-        #ln_final = model.ln_final(cache[l])[None, :, :]
-        #logits = model.unembed(ln_final)
-
-        head_results = cache[l][None, :, :]
-        logits = model.unembed(head_results)
-
-        topk_token_preds = torch.topk(logits, k_tokens)
-
-        for i in range(len(tokens[0])):
-          if not intermediate_tokens:
-              print("LAYER: ", l)
-              print("PROMPT: ", model.to_string(tokens[0][:]))
-              print(model.to_string(topk_token_preds[1][0][-1].reshape(k_tokens, 1)))
-              break
-          print("LAYER: ", l)
-          print("PROMPT: ", model.to_string(tokens[0][0:i+1]))
-          print(model.to_string(topk_token_preds[1][0][i].reshape(k_tokens, 1)))
-          print("---------")
-
-  ## This section below needs to be cleaned up
-  else: # This is incase we want each individual head
-    for l in cache:
-      if "hook_result" in l:
-        #print("LAYER: ", l)
-        #ln_final = model.ln_final(cache[l])[None, :, :] #blocks.10.hook_attn_out #blocks.5.hook_resid_post
-
-        head_results = cache[l][None, :, :]
-
-        for h in range(num_heads):
-          #head_out = ln_final[:,:, h, :]
-          head_out = head_results[:,:, h, :]
-          logits = model.unembed(head_out)
-          topk_token_preds = torch.topk(logits, k_tokens)
-          for i in range(len(tokens[0])):
-            if not intermediate_tokens:
-              print("LAYER: ", l, "| HEAD: ", h)
-              print("PROMPT: ", model.to_string(tokens[0][:]))
-              print(model.to_string(topk_token_preds[1][0][-1].reshape(k_tokens, 1)))
-            break
-            print("LAYER: ", l, "| HEAD: ", h)
-            print("PROMPT: ", model.to_string(tokens[0][0:i+1]))
-            print(model.to_string(topk_token_preds[1][0][i].reshape(k_tokens, 1)))
-          print("---------")
-
-        #TODO print out the next 10 token predictions as well
-
-prompt = "George Washington fought in the"
-head_latent_space_projector(gpt2_small, prompt, 10, 12, aggregate_heads=True, intermediate_tokens=False)
-
-prompt = "George Washington fought in the"
-prompt = "St. Peter's Bacillica is in the city of"
-head_latent_space_projector(gpt2_small, prompt, 10, 12, aggregate_heads=False, intermediate_tokens=False)
 
 prompt = "The first president of the United States"
 prompt = "The largest church in the world is in the city of"
