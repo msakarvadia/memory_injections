@@ -20,6 +20,7 @@ gpt2_large.cfg.use_attn_result = True
 data = get_handwritten_data('../../data/')
 multi = get_multi_100('../../data/')
 multi_1000 = get_multi_1000('../../data/')
+top_words = get_top_words('../../data/')
 
 
 # We are going to define a more general purpose editing function which records more useful metrics up front so that we can do post-analysis later
