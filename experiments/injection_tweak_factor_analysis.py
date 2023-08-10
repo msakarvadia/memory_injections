@@ -2,38 +2,8 @@ import sys
 sys.path.append("../")
 from data.load_data import get_handwritten_data, get_multi_100, get_multi_1000
 from utils import reject_outliers, get_ans_prob, apply_edit, memory_tweaker_head_hook, head_latent_space_projector
-
-# Import stuff
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import torch.optim as optim
-import numpy as np
-import pandas as pd
-import einops
-from fancy_einsum import einsum
-import tqdm.auto as tqdm
-import random
-from pathlib import Path
-from torch.utils.data import DataLoader
-
-from jaxtyping import Float, Int
-from functools import partial
-
-import itertools
-from transformers import AutoModelForCausalLM, AutoConfig, AutoTokenizer
-#import dataclasses
-#import datasets
-#from IPython.display import HTML
-
-import transformer_lens
-import transformer_lens.utils as utils
-from transformer_lens.hook_points import (
-    HookedRootModule,
-    HookPoint,
-)  # Hooking utilities
 from transformer_lens import HookedTransformer, HookedTransformerConfig, FactoredMatrix, ActivationCache
-import matplotlib.pyplot as plt
 
 torch.set_grad_enabled(False)
 
@@ -106,9 +76,7 @@ def edit_heatmap(data, model, layers=12, heads=1, tweak_factor=4, k=30, print_ou
 
   return data_cp
 
-
 # Function to vary the tweak factor
-
 def tweak_factor_vary(tweak_factors, data, model=gpt2_small, layers=12, title="gpt2_small_subject_edits", data_loc = "drive/MyDrive/Research/Mechanistic Interpretability/Figures/Fig_data/"):
   for i in tweak_factors:
     full_title = title+"_tweakFactor_"+str(i)+".csv"
@@ -116,13 +84,10 @@ def tweak_factor_vary(tweak_factors, data, model=gpt2_small, layers=12, title="g
 
     data_cp = edit_heatmap(data, model, layers=layers, heads=1, tweak_factor=i)
 
-    #data_loc = "drive/MyDrive/Research/Mechanistic Interpretability/Figures/Fig_data/"
     data_loc = "./"
-
-    #save each dataframe with a descriptive title
-    #torch.save(data_cp, data_loc+full_title)
-
     data_cp.to_csv(data_loc+full_title)
+
+#Experiments
 
 tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
 tweak_factor_vary(tweak_factors, data, gpt2_small, 12, title="gpt2_small_subject_edits_hand")
