@@ -44,10 +44,6 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 gpt2_small = HookedTransformer.from_pretrained("gpt2-small", device=device)
 gpt2_large = HookedTransformer.from_pretrained("gpt2-large", device=device)
 
-prompt = "The first president of the United States"
-prompt = "The largest church in the world is in the city of"
-head_latent_space_projector(gpt2_small, prompt, 10, 12, aggregate_heads=False, intermediate_tokens=False)
-
 prompt = "George Washington fought in the"
 head_latent_space_projector(gpt2_small, prompt, 10, 12, aggregate_heads=True, intermediate_tokens=True)
 
