@@ -1,7 +1,7 @@
 import sys
 sys.path.append("../")
 from data.load_data import get_handwritten_data, get_multi_100, get_multi_1000
-from utils import reject_outliers
+from utils import reject_outliers, get_ans_prob, apply_edit, memory_tweaker_head_hook
 
 # Import stuff
 import torch
@@ -22,8 +22,8 @@ from functools import partial
 
 import itertools
 from transformers import AutoModelForCausalLM, AutoConfig, AutoTokenizer
-import dataclasses
-import datasets
+#import dataclasses
+#import datasets
 #from IPython.display import HTML
 
 import transformer_lens
@@ -36,17 +36,6 @@ from transformer_lens import HookedTransformer, HookedTransformerConfig, Factore
 import matplotlib.pyplot as plt
 
 torch.set_grad_enabled(False)
-
-def imshow(tensor, renderer=None, xaxis="", yaxis="", **kwargs):
-    px.imshow(utils.to_numpy(tensor), color_continuous_midpoint=0.0, color_continuous_scale="RdBu", labels={"x":xaxis, "y":yaxis}, **kwargs).show(renderer)
-
-def line(tensor, renderer=None, xaxis="", yaxis="", **kwargs):
-    px.line(utils.to_numpy(tensor), labels={"x":xaxis, "y":yaxis}, **kwargs).show(renderer)
-
-def scatter(x, y, xaxis="", yaxis="", caxis="",title="", renderer=None, **kwargs):
-    x = utils.to_numpy(x)
-    y = utils.to_numpy(y)
-    px.scatter(y=y, x=x, labels={"x":xaxis, "y":yaxis, "color":caxis, "title":title}, **kwargs).show(renderer)
 
 """# Get Models"""
 
@@ -72,19 +61,7 @@ What we are doing here:
 *   We are going to project the latent space outputs of each attention layer back into vocabulary space so we can see what concepts a particular layer is adding to the residual stream
 *   We will also do this at the individual attention-head granularity so we can emprically inspect if specific heads have specific themes/roles
 
-
-
-
-
 """
-
-for name, param in gpt2_small.named_parameters():
-  print(name, param.shape)
-
-for name, param in gpt2_large.named_parameters():
-  print(name, param.shape)
-
-gpt2_small
 
 # Function: head_latent_space_projector
 # Args: agregate heads, individual heads, k tokens, model, prompt
@@ -263,6 +240,7 @@ We project memories from vocabulary space into the pseudo-hidden latent space of
 # We choose to act on the residual stream at the start of the layer, so we call it resid_pre
 # The type annotations are a guide to the reader and are not necessary
 
+"""
 #Args:
 def memory_tweaker_head_hook(
     attn_result: Float[torch.Tensor, "num_tokens num_heads d_model"],
@@ -307,6 +285,7 @@ def memory_tweaker_head_hook(
 
     #return this edited hook_attn_out
     return attn_result
+"""
 
 """Below, simply edit the prompt, extra_info, head_number, tweak_factor, layer to adjust to your example."""
 
@@ -390,16 +369,8 @@ patched_logits = gpt2_large.run_with_hooks(prompt,
                                       ]
                           )
 
-torch.equal(patched_logits, logits)
 
-print("Unedited top K tokens: ")
-topk_token_vals, topk_token_preds = torch.topk(logits, 70)
-gpt2_small.to_string(topk_token_preds[0][-1])
-
-print("Edited top K tokens: ")
-topk_token_vals_edit, topk_token_preds_edit = torch.topk(patched_logits, 70)
-gpt2_small.to_string(topk_token_preds_edit[0][-1])
-
+"""
 def apply_edit(model, extra_memory, prompt, tweak_factor=4, layer=10, head_num=0 ):
   # Use functools.partial to create a temporary hook function with the position fixed
   temp_hook_fn = partial(memory_tweaker_head_hook,
@@ -422,54 +393,8 @@ def apply_edit(model, extra_memory, prompt, tweak_factor=4, layer=10, head_num=0
                                         ]
                             )
   return logits, patched_logits
+"""
 
-def interpret_logits_as_vocab(model, logits, top_k=30):
-  topk_token_vals_edit, topk_token_preds_edit = torch.topk(logits, top_k)
-  return model.to_string(topk_token_preds_edit[0][-1])
-
-logits, patched_logits = apply_edit(gpt2_large, "Abe Lincoln",
-                                    "George Washington fought in the",
-                                    tweak_factor=4, layer=9, head_num=8)
-print("original logits")
-print(interpret_logits_as_vocab(gpt2_large, logits))
-print("edited logits")
-print(interpret_logits_as_vocab(gpt2_large, patched_logits))
-
-torch.equal(logits, patched_logits)
-
-logits, patched_logits = apply_edit(gpt2_large, "George Washington",
-                                    "The first president of the United States fought in the",
-                                    tweak_factor=4, layer=9, head_num=5)
-print("original logits")
-print(interpret_logits_as_vocab(gpt2_large, logits))
-print("edited logits")
-print(interpret_logits_as_vocab(gpt2_large, patched_logits))
-
-logits, patched_logits = apply_edit(gpt2_large, "George Washington",
-                                    "The first president of the United States fought in the",
-                                    tweak_factor=4, layer=9, head_num=7)
-print("original logits")
-print(interpret_logits_as_vocab(gpt2_large, logits))
-print("edited logits")
-print(interpret_logits_as_vocab(gpt2_large, patched_logits))
-
-logits, patched_logits = apply_edit(gpt2_small,
-                                    "President",
-                                    "The leader of the United States lives in the",
-                                    tweak_factor=4, layer=9, head_num=8)
-print("original logits")
-print(interpret_logits_as_vocab(gpt2_small, logits))
-print("edited logits")
-print(interpret_logits_as_vocab(gpt2_small, patched_logits))
-
-logits, patched_logits_a = apply_edit(gpt2_small,
-                                    "President",
-                                    "The leader of the United States lives in the",
-                                    tweak_factor=40, layer=9, head_num=9)
-print("original logits")
-print(interpret_logits_as_vocab(gpt2_small, logits))
-print("edited logits")
-print(interpret_logits_as_vocab(gpt2_small, patched_logits))
 
 
 #Get Data
@@ -477,79 +402,6 @@ data = get_handwritten_data('../data/')
 multi = get_multi_100('../data/')
 multi_1000 = get_multi_1000('../data/')
 
-"""# How useful is memory editing at a specific head (if we know what to inject)
-
-The working hypothesis here is the: the obscure (multi-hop) prompts are lacking specific memories (the additional hop) which is why their completions are not as good as explicit prompt completions.
-
-We have a dataset of obscure prompts, explicit prompts, and respectively their obscure subject and explicit subject.
-
-We wonder if naievely injecting the explicit subject as a memory into the obscure prompts hidden activation states will be enough to correct the final prompt.
-
-We will measure this memory injection approach's success by counting:
-1. How many places the desired next token moved up in the prediction heirarchy
-2. How much the individual probability of the desired next token increases
-"""
-
-def print_edit_results(data, model, layer=9, head_num=8, tweak_factor=4):
-  average_answer_prob_change_after_edit = 0
-  data['ans_prob_obs'] = 0
-  data['ans_prob_exp'] = 0
-  data['ans_prob_after_edit'] = 0
-
-  for i in range(len(data['answer'])):
-    answer = data['answer'][i]
-    memory = data['explicit_entity'][i]
-    prompt = data['obscure_sentence'][i]
-
-    explicit_prompt = data['explicit_sentence'][i]
-    exp_logits = model(explicit_prompt)
-
-
-    logits, patched_logits = apply_edit(model,
-                                      memory,
-                                      prompt,
-                                      tweak_factor=tweak_factor,
-                                      layer=layer,
-                                      head_num=head_num)
-
-    first_answer_tok = gpt2_small.to_tokens(answer, prepend_bos=False)[0][0].item()
-    answer_prob_before_mem = torch.nn.functional.softmax(logits[0][-1], dim=0)[first_answer_tok]
-    answer_prob_after_mem = torch.nn.functional.softmax(patched_logits[0][-1], dim=0)[first_answer_tok]
-    ans_prob_exp = torch.nn.functional.softmax(exp_logits[0][-1], dim=0)[first_answer_tok]
-
-    average_answer_prob_change_after_edit += answer_prob_after_mem - answer_prob_before_mem
-
-    data.loc[i, 'ans_prob_obs'] = answer_prob_before_mem.item()
-    data.loc[i, 'ans_prob_exp'] = ans_prob_exp.item()
-    data.loc[i, 'ans_prob_after_edit'] = answer_prob_after_mem.item()
-
-    print("Prompt: ", prompt)
-    print("Answer: ", data['answer'][i])
-    print("Memory: ", memory)
-    print("original logits | Answer Probability: ", answer_prob_before_mem)
-    print(interpret_logits_as_vocab(model, logits))
-    print("edited logits| Answer Probability: ", answer_prob_after_mem)
-    print(interpret_logits_as_vocab(model, patched_logits))
-    print("---------------- ", i)
-  print("Average Answer probability difference after edit: ", average_answer_prob_change_after_edit/len(data['answer']))
-  return data
-
-print_edit_results(data, gpt2_small)
-
-'''
-    Function to compute the probability of the next token (ans) completion
-    given the logits or prompt. Either prompt or logits needs to be passed.
-'''
-def get_ans_prob(model, ans, prompt=None, logits=None):
-    if logits is None and prompt is None:
-        raise ValueError("Either logits or prompt needs to be provided")
-    ans_token = model.to_tokens(ans)[0][1]
-    if logits is None:
-        tokens = model.to_tokens(prompt)
-        logits, cache = model.run_with_cache(tokens, remove_batch_dim=True)
-
-    total_ans_prob = torch.nn.functional.softmax(logits, -1)[0][-1][ans_token].item()
-    return total_ans_prob
 
 """#Tweak Factor Analysis
 
@@ -557,7 +409,7 @@ We will replicate the above experiments, but accross a number of tweak factors s
 """
 
 # We are going to define a more general purpose editing function which records more useful metrics up front so that we can do post-analysis later
-def edit_heatmap(data, model, layers=12, heads=1, tweak_factor=4, k=30, print_output=False):
+def edit_heatmap(data, model, layers=12, heads=1, tweak_factor=4, k=30, print_output=True):
   num_data_points = len(data['answer'])
 
   data_cp = data.copy()
@@ -653,4 +505,3 @@ tweak_factor_vary(tweak_factors, data, gpt2_large, 36, title="gpt2_large_subject
 
 #tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
 #tweak_factor_vary(tweak_factors, multi_1000, gpt2_large, 36, title="gpt2_large_subject_edits_2wmh")
-
