@@ -1,5 +1,5 @@
 import sys
-sys.path.append("../")
+sys.path.append("../../")
 from data.load_data import get_top_words, get_handwritten_data, get_multi_100, get_multi_1000
 
 # Import stuff
@@ -47,11 +47,11 @@ parser.add_argument("--model", default="gpt2-small", choices=["gpt2-small", "gpt
 args = parser.parse_args()
 
 #Get Data
-data = get_handwritten_data('../data/')
-multi = get_multi_100('../data/')
-multi_1000 = get_multi_1000('../data/')
-top_words = get_multi_1000('../data/')
-top_words = get_top_words('../data/')
+data = get_handwritten_data('../../data/')
+multi = get_multi_100('../../data/')
+multi_1000 = get_multi_1000('../../data/')
+top_words = get_multi_1000('../../data/')
+top_words = get_top_words('../../data/')
 
 print(top_words)
 
