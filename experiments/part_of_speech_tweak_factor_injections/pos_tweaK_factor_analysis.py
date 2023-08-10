@@ -1,20 +1,36 @@
 import sys
 sys.path.append("../../")
-from data.load_data import get_handwritten_data, get_multi_100, get_multi_1000
+from data.load_data import get_top_words, get_handwritten_data, get_multi_100, get_multi_1000
 from utils import reject_outliers, get_ans_prob, apply_edit, memory_tweaker_head_hook, head_latent_space_projector
 import torch
 from transformer_lens import HookedTransformer, HookedTransformerConfig, FactoredMatrix, ActivationCache
+import argparse
+import random
 
 torch.set_grad_enabled(False)
+
+#Set up arg parser
+parser = argparse.ArgumentParser()
+parser.add_argument("--memory_dataset", default="nouns",choices=["subject","top_5000", "nouns","verbs", "adjective", "adverbs", "conjunctions"],  type=str, help="the category to choose fake memories from")
+parser.add_argument("--dataset", default="hand",choices=["hand", "2wmh"],  type=str)
+parser.add_argument("--model", default="gpt2-small", choices=["gpt2-small", "gpt2-large"],  type=str)
+parser.add_argument("--num_layers", default=12, choices=[12, 36],  type=str, help="number of layers in your model")
+parser.add_argument("--tweak_factors", default=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], type=list, help="list of tweak factors to test")
+args = parser.parse_args()
+#TODO: specify title of file automatically
+#TODO: specify save directory
+#TODO: add extra column per layer to specify the memory that was injected
 
 """# Get Models"""
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-gpt2_small = HookedTransformer.from_pretrained("gpt2-small", device=device)
-gpt2_large = HookedTransformer.from_pretrained("gpt2-large", device=device)
-gpt2_small.cfg.use_attn_result = True
-gpt2_large.cfg.use_attn_result = True
+if(args.model == "gpt2-small"):
+    model = HookedTransformer.from_pretrained("gpt2-small", device=device)
+else:
+    model = HookedTransformer.from_pretrained("gpt2-large", device=device)
+
+model.cfg.use_attn_result = True
 
 #Get Data
 data = get_handwritten_data('../../data/')
@@ -22,7 +38,12 @@ multi = get_multi_100('../../data/')
 multi_1000 = get_multi_1000('../../data/')
 top_words = get_top_words('../../data/')
 
-def get_words(data, fake_data_type="nouns"):
+if(args.dataset == "data"):
+    data = data
+if(args.dataset == "2wmh"):
+    data = multi_1000
+
+def get_words(data=data, fake_data_type=args.memory_dataset):
 
   subjects = list(data['explicit_entity'])
   top_5000 = top_words['Top 5000 Words'].dropna().tolist()
@@ -56,6 +77,7 @@ def edit_heatmap(data, model, layers=12, heads=1, tweak_factor=4, k=30, print_ou
   data_cp['answer_prob_exp'] = 0
   data_cp['answer_prob_obs'] = 0
 
+  memories = get_words()
 
   for l in range(layers):
       layer_answer_edit = 'ans_prob_obs_edit_layer'+str(l)
@@ -69,7 +91,9 @@ def edit_heatmap(data, model, layers=12, heads=1, tweak_factor=4, k=30, print_ou
       h=0
       for i in range(num_data_points):
         answer = data['answer'][i]
-        memory = data['explicit_entity'][i]
+        #randomly choose word from "memories"
+        memory = random.choice(memories)
+        print(memory)
         prompt = data['obscure_sentence'][i]
         explicit_prompt = data['explicit_sentence'][i]
         logits, patched_logits = apply_edit(model,
@@ -103,27 +127,16 @@ def edit_heatmap(data, model, layers=12, heads=1, tweak_factor=4, k=30, print_ou
   return data_cp
 
 # Function to vary the tweak factor
-def tweak_factor_vary(tweak_factors, data, model=gpt2_small, layers=12, title="gpt2_small_subject_edits", data_loc = "drive/MyDrive/Research/Mechanistic Interpretability/Figures/Fig_data/"):
+def tweak_factor_vary(tweak_factors=args.tweak_factors, data=args.dataset, model=args.model, layers=args.num_layers, title="gpt2_small_subject_edits", data_loc = "./"):
   for i in tweak_factors:
     full_title = title+"_tweakFactor_"+str(i)+".csv"
     print(full_title)
 
     data_cp = edit_heatmap(data, model, layers=layers, heads=1, tweak_factor=i)
 
-    data_loc = "./"
     data_cp.to_csv(data_loc+full_title)
 
 #Experiments
 
 tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-tweak_factor_vary(tweak_factors, data, gpt2_small, 12, title="gpt2_small_subject_edits_hand")
-
-tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-tweak_factor_vary(tweak_factors, data, gpt2_large, 36, title="gpt2_large_subject_edits_hand")
-
-#tweak_factors = [6,7,8,9,10,11,12,13,14,15]
-#tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-#tweak_factor_vary(tweak_factors, multi_1000, gpt2_small, 12, title="gpt2_small_subject_edits_2wmh")
-
-#tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-#tweak_factor_vary(tweak_factors, multi_1000, gpt2_large, 36, title="gpt2_large_subject_edits_2wmh")
+tweak_factor_vary(args.tweak_factors, data, model, args.num_layers, title="gpt2_small_subject_edits_hand")
