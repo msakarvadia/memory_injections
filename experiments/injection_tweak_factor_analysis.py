@@ -43,20 +43,14 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 
 gpt2_small = HookedTransformer.from_pretrained("gpt2-small", device=device)
 gpt2_large = HookedTransformer.from_pretrained("gpt2-large", device=device)
-
-prompt = "George Washington fought in the"
-head_latent_space_projector(gpt2_small, prompt, 10, 12, aggregate_heads=True, intermediate_tokens=True)
+gpt2_small.cfg.use_attn_result = True
+gpt2_large.cfg.use_attn_result = True
 
 #Get Data
 data = get_handwritten_data('../data/')
 multi = get_multi_100('../data/')
 multi_1000 = get_multi_1000('../data/')
 
-
-"""#Tweak Factor Analysis
-
-We will replicate the above experiments, but accross a number of tweak factors so that we can do a sensativity analysis
-"""
 
 # We are going to define a more general purpose editing function which records more useful metrics up front so that we can do post-analysis later
 def edit_heatmap(data, model, layers=12, heads=1, tweak_factor=4, k=30, print_output=True):
