@@ -44,29 +44,7 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 gpt2_small = HookedTransformer.from_pretrained("gpt2-small", device=device)
 gpt2_large = HookedTransformer.from_pretrained("gpt2-large", device=device)
 
-"""# Interpret the Attention Head Outputs as knowledge retrievers
 
-Hypothesis:
-
-*   The residual stream of a transformer acts as "memory" for the transformer
-*   Each attention layer plays a specific role in editing the concepts in the residual stream (these are more like ideas/themes/concepts rather than actual facts)
-*   the Attention head outputs heavily influence what knowledge is retrieved from the MLPs that follow it.
-*   Within an attention layer, individual heads play even more specific roles (i.e. pronoun head, proper noun head, etc.)
-*   The MLPs act as knowledge stores. Based on the concepts in the residual stream, specific facts might be retrieved from the MLP and pushed into the residual stream.
-
-
-
-What we are doing here:
-
-*   We are going to project the latent space outputs of each attention layer back into vocabulary space so we can see what concepts a particular layer is adding to the residual stream
-*   We will also do this at the individual attention-head granularity so we can emprically inspect if specific heads have specific themes/roles
-
-"""
-
-# Function: head_latent_space_projector
-# Args: agregate heads, individual heads, k tokens, model, prompt
-# This function just projects the latent space output of each head in a
-# transformer back into vocabulary space so a user can assess what information is being put back into memory
 
 def head_latent_space_projector(model, prompt, k_tokens, num_heads, aggregate_heads=True, intermediate_tokens=True):
   # TODO: implement a way to turn off intermediate_tokens (for the sake of truncating output)
@@ -150,18 +128,6 @@ head_latent_space_projector(gpt2_small, prompt, 10, 12, aggregate_heads=True, in
 prompt = "The first president of the United States fought in the"
 head_latent_space_projector(gpt2_large, prompt, 10, 20, aggregate_heads=False, intermediate_tokens=False)
 
-"""# How do we edit the memories at each layer?
-
-We can inject concepts into the residual stream by editing the outputs of the attention layers (both in aggregate, and also at the invididual head level)
-
-How do we do this:
-
-We project memories from vocabulary space into the pseudo-hidden latent space of the model by applying the transpose of the unembedding matrix to the model. We then add these transformed memories directly to the outputs of an attention layer.
-"""
-
-# We define a residual stream patching hook
-# We choose to act on the residual stream at the start of the layer, so we call it resid_pre
-# The type annotations are a guide to the reader and are not necessary
 
 #Args:
 def memory_tweaker_hook(
@@ -227,67 +193,7 @@ gpt2_small.to_string(topk_token_preds[0][-1])
 topk_token_vals_edit, topk_token_preds_edit = torch.topk(patched_logits, 70)
 gpt2_small.to_string(topk_token_preds_edit[0][-1])
 
-"""# How do we edit the memories at each head?
 
-We can inject concepts into the residual stream by editing the outputs of the individual attention heads.
-
-How do we do this:
-
-We project memories from vocabulary space into the pseudo-hidden latent space of the model by applying the transpose of the unembedding matrix to the model. We then add these transformed memories directly to an individual attention head as the model is doing inference.
-"""
-
-# We define a residual stream patching hook
-# We choose to act on the residual stream at the start of the layer, so we call it resid_pre
-# The type annotations are a guide to the reader and are not necessary
-
-"""
-#Args:
-def memory_tweaker_head_hook(
-    attn_result: Float[torch.Tensor, "num_tokens num_heads d_model"],
-    hook: HookPoint, #name of layer where we inject memory
-    extra_info: str, #the string that we tokenize and then inject into memory
-    model: transformer_lens.HookedTransformer, #the model from which we get the unembedding matrix from
-    vocab_size: int, #size of model vocabulary
-    tweak_factor: float,
-    head_num: int #The number of the head we want to edit
-    #cache: transformer_lens.ActivationCache #this is the
-) -> Float[torch.Tensor, "batch pos d_model"]:
-
-
-
-    #print("Hook point: ", hook.name)
-    #print("head num: ", head_num)
-    #tokenize string
-    tok_extra_info = model.to_tokens(extra_info, prepend_bos=False)
-    #print(tok_extra_info)
-
-    #transform tokens into one-hot vector
-    #TODO: switch back to zeros
-    extra_memory = torch.zeros(vocab_size).to(device)
-    #extra_memory = torch.ones(vocab_size)
-    #TODO: need to put a one in the spot with all of the extra info tokens and mult by tweak factor
-    for i in tok_extra_info:
-      extra_memory[i] = 1
-
-    #subtract bias, and apply transpose of unembeding matrix to tokenized string to get it into model's hidden dim
-    #extra_memory = extra_memory - model.unembed.b_U
-    extra_memory = einsum("d_vocab, d_vocab d_model-> d_model", extra_memory, model.W_U.T)
-
-    #TODO think about how layer norm would imapct things
-
-    #add the extra_info embedded in latent space to hook_attn_out
-    #print(attn_result.shape)
-    attn_result[:,:,head_num,:] = attn_result[:,:,head_num,:] + extra_memory * tweak_factor
-    #attn_result[:,:,head_num,:] + extra_memory * tweak_factor
-    #print(attn_result[:,:,head_num,:])
-
-    # TODO: Add a "jiggle" feature here.
-
-    #return this edited hook_attn_out
-    return attn_result
-"""
-
-"""Below, simply edit the prompt, extra_info, head_number, tweak_factor, layer to adjust to your example."""
 
 # Use functools.partial to create a temporary hook function with the position fixed
 temp_hook_fn = partial(memory_tweaker_head_hook,
@@ -368,34 +274,6 @@ patched_logits = gpt2_large.run_with_hooks(prompt,
                                       temp_hook_fn)
                                       ]
                           )
-
-
-"""
-def apply_edit(model, extra_memory, prompt, tweak_factor=4, layer=10, head_num=0 ):
-  # Use functools.partial to create a temporary hook function with the position fixed
-  temp_hook_fn = partial(memory_tweaker_head_hook,
-                        extra_info= extra_memory, #"Barak Obama",
-                        vocab_size=50257,
-                        model=model,
-                        tweak_factor=tweak_factor,
-                        head_num=head_num)
-
-  #prompt = "The first black president of the United States was a member of the"
-  #Get original logits
-  logits = model(prompt)
-
-  #Get patched Logits
-  layer  = layer
-  patched_logits = model.run_with_hooks(prompt,
-                            fwd_hooks=[
-                                        ( utils.get_act_name("result", layer),
-                                        temp_hook_fn)
-                                        ]
-                            )
-  return logits, patched_logits
-"""
-
-
 
 #Get Data
 data = get_handwritten_data('../data/')
