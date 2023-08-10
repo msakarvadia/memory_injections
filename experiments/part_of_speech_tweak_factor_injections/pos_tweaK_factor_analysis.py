@@ -22,6 +22,31 @@ multi = get_multi_100('../../data/')
 multi_1000 = get_multi_1000('../../data/')
 top_words = get_top_words('../../data/')
 
+def get_words(data, fake_data_type="nouns"):
+
+  subjects = list(data['explicit_entity'])
+  top_5000 = top_words['Top 5000 Words'].dropna().tolist()
+  nouns = top_words['Nouns'].dropna().tolist()
+  verbs = top_words['Verbs'].dropna().tolist()
+  adjectives = top_words['Adjectives'].dropna().tolist()
+  adverbs = top_words['Adverbs'].dropna().tolist()
+  conjunctions = top_words['Conjunctions'].dropna().tolist()
+
+  if fake_data_type=="subject":
+    words=subjects
+  if fake_data_type=="top_5000":
+    words=top_5000
+  if fake_data_type=="nouns":
+    words=nouns
+  if fake_data_type=="verbs":
+    words=verbs
+  if fake_data_type=="adjectives":
+    words=adjectives
+  if fake_data_type=="adverbs":
+    words=adverbs
+  if fake_data_type=="conjunctions":
+    words=conjunctions
+  return words
 
 # We are going to define a more general purpose editing function which records more useful metrics up front so that we can do post-analysis later
 def edit_heatmap(data, model, layers=12, heads=1, tweak_factor=4, k=30, print_output=True):
