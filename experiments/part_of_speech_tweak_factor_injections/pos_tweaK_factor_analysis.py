@@ -18,8 +18,6 @@ parser.add_argument("--save_dir", default="pos_results", type=str)
 parser.add_argument("--num_layers", default=12, choices=[12, 36],  type=str, help="number of layers in your model")
 parser.add_argument("--tweak_factors", default=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], type=list, help="list of tweak factors to test")
 args = parser.parse_args()
-#TODO: specify save directory
-#TODO: add extra column per layer to specify the memory that was injected
 
 """# Get Models"""
 
@@ -43,6 +41,7 @@ if(args.dataset == "data"):
 if(args.dataset == "2wmh"):
     data = multi_1000
 
+# get the datasets from different parts of speach to pull random memories from
 def get_words(data=data, fake_data_type=args.memory_dataset):
 
   subjects = list(data['explicit_entity'])
@@ -70,7 +69,7 @@ def get_words(data=data, fake_data_type=args.memory_dataset):
   return words
 
 # We are going to define a more general purpose editing function which records more useful metrics up front so that we can do post-analysis later
-def edit_heatmap(data, model, layers=12, heads=1, tweak_factor=4, k=30, print_output=True):
+def edit_heatmap(data, model, layers=12, tweak_factor=4, k=30, print_output=True):
   num_data_points = len(data['answer'])
 
   data_cp = data.copy()
@@ -85,9 +84,10 @@ def edit_heatmap(data, model, layers=12, heads=1, tweak_factor=4, k=30, print_ou
       data_cp[layer_answer_edit] = 0
       data_cp[layer_top_k] = ''
       data_cp[layer_top_k] = data_cp[layer_top_k].apply(list)
+      #TODO: add extra column per layer to specify the memory that was injected
 
-    #for h in range(heads):
-      # this is a hacky way to hold the head number constant at head 0, bc it doesn't matter which head we inject into since they all get concatenated anyway
+      # this is a hacky way to hold the head number constant at head 0, 
+      #bc it doesn't matter which head we inject into since they all get concatenated anyway
       h=0
       for i in range(num_data_points):
         answer = data['answer'][i]
@@ -137,7 +137,7 @@ def tweak_factor_vary(tweak_factors=args.tweak_factors,
     full_title=f"{args.model_name}_{args.dataset}_pos_inject_tweak{i}_{args.memory_dataset}.csv"
     print(full_title)
 
-    data_cp = edit_heatmap(data, model, layers=layers, heads=1, tweak_factor=i)
+    data_cp = edit_heatmap(data, model, layers=layers, tweak_factor=i)
 
     data_cp.to_csv(data_loc+"args.model_name"+full_title)
 
