@@ -17,7 +17,6 @@ parser.add_argument("--model", default="gpt2-small", choices=["gpt2-small", "gpt
 parser.add_argument("--num_layers", default=12, choices=[12, 36],  type=str, help="number of layers in your model")
 parser.add_argument("--tweak_factors", default=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], type=list, help="list of tweak factors to test")
 args = parser.parse_args()
-#TODO: specify title of file automatically
 #TODO: specify save directory
 #TODO: add extra column per layer to specify the memory that was injected
 
@@ -129,7 +128,8 @@ def edit_heatmap(data, model, layers=12, heads=1, tweak_factor=4, k=30, print_ou
 # Function to vary the tweak factor
 def tweak_factor_vary(tweak_factors=args.tweak_factors, data=args.dataset, model=args.model, layers=args.num_layers, title="gpt2_small_subject_edits", data_loc = "./"):
   for i in tweak_factors:
-    full_title = title+"_tweakFactor_"+str(i)+".csv"
+    #specify title of file automatically
+    full_title=f"{args.model}_{args.dataset}_pos_inject_tweak{i}_{args.memory_dataset}.csv"
     print(full_title)
 
     data_cp = edit_heatmap(data, model, layers=layers, heads=1, tweak_factor=i)
