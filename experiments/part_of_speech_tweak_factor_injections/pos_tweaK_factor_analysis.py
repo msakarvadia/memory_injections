@@ -6,6 +6,10 @@ import torch
 from transformer_lens import HookedTransformer, HookedTransformerConfig, FactoredMatrix, ActivationCache
 import argparse
 import random
+import os
+
+#set random seed!
+random.seed(42)
 
 torch.set_grad_enabled(False)
 
@@ -79,11 +83,13 @@ def edit_heatmap(data, model, layers=12, tweak_factor=4, k=30, print_output=True
   memories = get_words()
 
   for l in range(layers):
+      memory_col_layer = 'injected_memory_layer_'+str(l)
       layer_answer_edit = 'ans_prob_obs_edit_layer'+str(l)
       layer_top_k = 'topk_tok_obs_edit_layer'+str(l)
       data_cp[layer_answer_edit] = 0
       data_cp[layer_top_k] = ''
       data_cp[layer_top_k] = data_cp[layer_top_k].apply(list)
+      data_cp[memory_col_layer] = ''
       #TODO: add extra column per layer to specify the memory that was injected
 
       # this is a hacky way to hold the head number constant at head 0, 
@@ -93,7 +99,7 @@ def edit_heatmap(data, model, layers=12, tweak_factor=4, k=30, print_output=True
         answer = data['answer'][i]
         #randomly choose word from "memories"
         memory = random.choice(memories)
-        print(memory)
+        #print(memory)
         prompt = data['obscure_sentence'][i]
         explicit_prompt = data['explicit_sentence'][i]
         logits, patched_logits = apply_edit(model,
@@ -112,6 +118,7 @@ def edit_heatmap(data, model, layers=12, tweak_factor=4, k=30, print_output=True
           data_cp.loc[i, 'answer_prob_exp'] = get_ans_prob(model, answer, explicit_prompt)
 
         data_cp.loc[i, layer_answer_edit] = answer_prob_after_mem.item()
+        data_cp.loc[i, memory_col_layer] = memory
 
         vals, idx = torch.topk(patched_logits[0][-1], k)
         data_cp.at[i, layer_top_k]= idx.tolist()
@@ -139,7 +146,11 @@ def tweak_factor_vary(tweak_factors=args.tweak_factors,
 
     data_cp = edit_heatmap(data, model, layers=layers, tweak_factor=i)
 
-    data_cp.to_csv(data_loc+"args.model_name"+full_title)
+    base_dir = data_loc+"/"+args.model_name+"/"
+    #if dir doesn't exist make it
+    if not os.path.exists(base_dir):
+        os.makedirs(base_dir) 
+    data_cp.to_csv(base_dir+full_title)
 
 #Experiments
 
