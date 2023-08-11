@@ -1,5 +1,5 @@
 import sys
-sys.path.append("../")
+sys.path.append("../../")
 from data.load_data import get_top_words, get_handwritten_data, get_multi_100, get_multi_1000
 
 # Import stuff
@@ -47,11 +47,10 @@ parser.add_argument("--model", default="gpt2-small", choices=["gpt2-small", "gpt
 args = parser.parse_args()
 
 #Get Data
-data = get_handwritten_data('../data/')
-multi = get_multi_100('../data/')
-multi_1000 = get_multi_1000('../data/')
-top_words = get_multi_1000('../data/')
-top_words = get_top_words('../data/')
+data = get_handwritten_data('../../data/')
+multi = get_multi_100('../../data/')
+multi_1000 = get_multi_1000('../../data/')
+top_words = get_top_words('../../data/')
 
 print(top_words)
 
@@ -240,22 +239,10 @@ def fake_injections(data=data, top_words=top_words, fake_data_type="conjunctions
   data_cp.to_csv(data_loc+full_title)
   return data_cp
 
-
-#data_cp = fake_injections(data=data, top_words=top_words, model=gpt2_small, layer=8, k=30, tweak_factor=4, full_title="GPT2_small_hand_fake_inject_layer9_tweak4.csv")
-
-#data_cp = fake_injections(data=data, top_words=top_words, model=gpt2_large, layer=14, k=30, tweak_factor=9, full_title="GPT2_large_hand_fake_inject_layer14_tweak10.csv")
-
-#data_cp = fake_injections(data=multi_1000, top_words=top_words, model=gpt2_small, layer=8, k=30, tweak_factor=4, full_title="GPT2_small_2wmh_fake_inject_layer8_tweak4.csv")
-
-#data_cp = fake_injections(data=multi_1000, top_words=top_words, model=gpt2_large, layer=4, k=30, tweak_factor=8, full_title="GPT2_small_2wmh_fake_inject_layer8_tweak4.csv")
-
 #gpt2 large, 2wmh, layer 4, tweak 8
 #gpt2 large, hand, layer 14, tweak 9
 #gpt2 small, 2wmh, layer 8, tweak 4
 #gpt2 small, hand, layer  7 , tweak 3
-
-#data_cp = fake_injections(data=data, top_words=top_words, fake_data_type="conjunctions", model=gpt2_small, layer=7, k=30,
-#                          tweak_factor=3, full_title="GPT2_small_hand_fake_inject_layer7_tweak3_conjunctions.csv")
 
 fake_data_types = ["top_5000", "nouns", "verbs", "adjectives", "adverbs", "conjunctions"]
 
