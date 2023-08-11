@@ -13,7 +13,8 @@ torch.set_grad_enabled(False)
 parser = argparse.ArgumentParser()
 parser.add_argument("--memory_dataset", default="nouns",choices=["subject","top_5000", "nouns","verbs", "adjective", "adverbs", "conjunctions"],  type=str, help="the category to choose fake memories from")
 parser.add_argument("--dataset", default="hand",choices=["hand", "2wmh"],  type=str)
-parser.add_argument("--model", default="gpt2-small", choices=["gpt2-small", "gpt2-large"],  type=str)
+parser.add_argument("--model_name", default="gpt2-small", choices=["gpt2-small", "gpt2-large"],  type=str)
+parser.add_argument("--save_dir", default="pos_results", type=str)
 parser.add_argument("--num_layers", default=12, choices=[12, 36],  type=str, help="number of layers in your model")
 parser.add_argument("--tweak_factors", default=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], type=list, help="list of tweak factors to test")
 args = parser.parse_args()
@@ -24,7 +25,7 @@ args = parser.parse_args()
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-if(args.model == "gpt2-small"):
+if(args.model_name == "gpt2-small"):
     model = HookedTransformer.from_pretrained("gpt2-small", device=device)
 else:
     model = HookedTransformer.from_pretrained("gpt2-large", device=device)
@@ -126,17 +127,21 @@ def edit_heatmap(data, model, layers=12, heads=1, tweak_factor=4, k=30, print_ou
   return data_cp
 
 # Function to vary the tweak factor
-def tweak_factor_vary(tweak_factors=args.tweak_factors, data=args.dataset, model=args.model, layers=args.num_layers, title="gpt2_small_subject_edits", data_loc = "./"):
+def tweak_factor_vary(tweak_factors=args.tweak_factors,
+                        data=args.dataset,
+                        model=model,
+                        layers=args.num_layers,
+                        data_loc = args.save_dir):
   for i in tweak_factors:
     #specify title of file automatically
-    full_title=f"{args.model}_{args.dataset}_pos_inject_tweak{i}_{args.memory_dataset}.csv"
+    full_title=f"{args.model_name}_{args.dataset}_pos_inject_tweak{i}_{args.memory_dataset}.csv"
     print(full_title)
 
     data_cp = edit_heatmap(data, model, layers=layers, heads=1, tweak_factor=i)
 
-    data_cp.to_csv(data_loc+full_title)
+    data_cp.to_csv(data_loc+"args.model_name"+full_title)
 
 #Experiments
 
 tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-tweak_factor_vary(args.tweak_factors, data, model, args.num_layers, title="gpt2_small_subject_edits_hand")
+tweak_factor_vary(args.tweak_factors, data, model, args.num_layers)
