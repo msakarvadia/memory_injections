@@ -19,7 +19,6 @@ parser.add_argument("--memory_dataset", default="nouns",choices=["subject","top_
 parser.add_argument("--dataset", default="hand",choices=["hand", "2wmh"],  type=str)
 parser.add_argument("--model_name", default="gpt2-small", choices=["gpt2-small", "gpt2-large"],  type=str)
 parser.add_argument("--save_dir", default="pos_results", type=str)
-parser.add_argument("--num_layers", default=12, choices=[12, 36],  type=str, help="number of layers in your model")
 parser.add_argument("--tweak_factors", default=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], type=list, help="list of tweak factors to test")
 args = parser.parse_args()
 
@@ -29,8 +28,10 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 
 if(args.model_name == "gpt2-small"):
     model = HookedTransformer.from_pretrained("gpt2-small", device=device)
+    num_layers=12
 else:
     model = HookedTransformer.from_pretrained("gpt2-large", device=device)
+    num_layers=36
 
 model.cfg.use_attn_result = True
 
@@ -47,6 +48,7 @@ if(args.dataset == "2wmh"):
 
 # get the datasets from different parts of speach to pull random memories from
 def get_words(data=data, fake_data_type=args.memory_dataset):
+  print(fake_data_type)
 
   subjects = list(data['explicit_entity'])
   top_5000 = top_words['Top 5000 Words'].dropna().tolist()
@@ -73,7 +75,7 @@ def get_words(data=data, fake_data_type=args.memory_dataset):
   return words
 
 # We are going to define a more general purpose editing function which records more useful metrics up front so that we can do post-analysis later
-def edit_heatmap(data, model, layers=12, tweak_factor=4, k=30, print_output=True):
+def edit_heatmap(data, model, layers=12, tweak_factor=4, k=30, print_output=False):
   num_data_points = len(data['answer'])
 
   data_cp = data.copy()
@@ -137,22 +139,21 @@ def edit_heatmap(data, model, layers=12, tweak_factor=4, k=30, print_output=True
 def tweak_factor_vary(tweak_factors=args.tweak_factors,
                         data=args.dataset,
                         model=model,
-                        layers=args.num_layers,
+                        layers=num_layers,
                         data_loc = args.save_dir):
   for i in tweak_factors:
     #specify title of file automatically
-    full_title=f"{args.model_name}_{args.dataset}_pos_inject_tweak{i}_{args.memory_dataset}.csv"
+    full_title=f"{args.model_name}_{args.dataset}_pos_inject_tweak{i}.csv"
     print(full_title)
 
     data_cp = edit_heatmap(data, model, layers=layers, tweak_factor=i)
 
-    base_dir = data_loc+"/"+args.model_name+"/"
+    base_dir = data_loc+"/"+args.model_name+"/"+args.memory_dataset+"/"
     #if dir doesn't exist make it
     if not os.path.exists(base_dir):
         os.makedirs(base_dir) 
     data_cp.to_csv(base_dir+full_title)
 
 #Experiments
-
 tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-tweak_factor_vary(args.tweak_factors, data, model, args.num_layers)
+tweak_factor_vary(args.tweak_factors, data, model, num_layers)
