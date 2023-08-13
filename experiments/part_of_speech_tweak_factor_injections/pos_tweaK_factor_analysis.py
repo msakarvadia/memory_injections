@@ -143,12 +143,12 @@ def tweak_factor_vary(tweak_factors=args.tweak_factors,
                         data_loc = args.save_dir):
   for i in tweak_factors:
     #specify title of file automatically
-    full_title=f"{args.model_name}_{args.dataset}_pos_inject_tweak{i}.csv"
+    full_title=f"{args.model_name}_{args.dataset}_pos_inject_tweakFactor_{i}.csv"
     print(full_title)
 
     data_cp = edit_heatmap(data, model, layers=layers, tweak_factor=i)
 
-    base_dir = data_loc+"/"+args.model_name+"/"+args.memory_dataset+"/"
+    base_dir = data_loc+"/"+args.model_name+"/"+args.dataset+"/"+args.memory_dataset+"/"
     #if dir doesn't exist make it
     if not os.path.exists(base_dir):
         os.makedirs(base_dir) 
