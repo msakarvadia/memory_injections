@@ -15,7 +15,7 @@ torch.set_grad_enabled(False)
 
 #Set up arg parser
 parser = argparse.ArgumentParser()
-parser.add_argument("--memory_dataset", default="nouns",choices=["subject","top_5000", "nouns","verbs", "adjective", "adverbs", "conjunctions"],  type=str, help="the category to choose fake memories from")
+parser.add_argument("--memory_dataset", default="nouns",choices=["subject","top_5000", "nouns","verbs", "adjectives", "adverbs", "conjunctions"],  type=str, help="the category to choose fake memories from")
 parser.add_argument("--dataset", default="hand",choices=["hand", "2wmh"],  type=str)
 parser.add_argument("--model_name", default="gpt2-small", choices=["gpt2-small", "gpt2-large"],  type=str)
 parser.add_argument("--save_dir", default="pos_results", type=str)
