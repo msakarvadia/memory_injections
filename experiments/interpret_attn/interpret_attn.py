@@ -19,7 +19,7 @@ torch.set_grad_enabled(False)
 parser = argparse.ArgumentParser()
 parser.add_argument("--dataset", default="hand",choices=["hand", "2wmh"],  type=str)
 parser.add_argument("--model_name", default="gpt2-small", choices=["gpt2-small", "gpt2-large"],  type=str)
-parser.add_argument("--save_dir", default="pos_results", type=str)
+parser.add_argument("--save_dir", default="attn_results", type=str)
 args = parser.parse_args()
 
 """# Get Models"""
@@ -101,6 +101,11 @@ for i in data['explicit_sentence']:
     cache_df = get_caches_for_prompt(i, cache_df, hook_ids, model=model, model_name=model_name, num_heads=num_heads)
 #cache_df = get_caches_for_prompt("My name is", cache_df, hook_ids, model=model, model_name=model_name, num_heads=num_heads)
 
+base_dir = args.save_dir+"/"
+#if dir doesn't exist make it
+if not os.path.exists(base_dir):
+    os.makedirs(base_dir) 
 full_title=f"{args.model_name}_{args.dataset}_attn_head_outputs.csv"
 print(full_title)
-cache_df.to_csv(full_title)
+
+cache_df.to_csv(base_dir+full_title)
