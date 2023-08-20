@@ -89,9 +89,13 @@ def edit_heatmap(data, model, layers=12, tweak_factor=4, k=30, print_output=Fals
       layer_answer_edit = 'ans_prob_obs_edit_layer'+str(l)
       layer_top_k = 'topk_tok_obs_edit_layer'+str(l)
       data_cp[layer_answer_edit] = 0
-      data_cp[layer_top_k] = ''
+      #data_cp[layer_top_k] = ''
+      idx = len(data_cp.columns)
+      data_cp.insert(idx, layer_top_k, '')
       data_cp[layer_top_k] = data_cp[layer_top_k].apply(list)
-      data_cp[memory_col_layer] = ''
+      idx = len(data_cp.columns)
+      data_cp.insert(idx, memory_col_layer, '')
+      #data_cp[memory_col_layer] = ''
       #TODO: add extra column per layer to specify the memory that was injected
 
       # this is a hacky way to hold the head number constant at head 0, 
