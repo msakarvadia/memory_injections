@@ -64,11 +64,17 @@ def interp_attn_layer(head_results, num_heads, k_tokens=50, model=model):
           head_out = head_results[:, :, h, :]
           with torch.no_grad():
             logits = model.unembed(head_out)
-          heads.append(logits[0][-1].cpu().numpy())
+          val, idx = torch.topk(logits[0][-1].cpu(),k_tokens)
+          #head_output = str(logits[0][-1].tolist())
+          head_output = idx
+          #print(head_output)
+          #print(len(head_output))
+          heads.append(head_output)
+          #heads.append(logits[0][-1].cpu().numpy())
   return heads
 
 #func to grab all of the cached outputs of attn heads
-def get_caches_for_prompt(prompt, cache_df, hook_ids, model=model, model_name=args.model_name, num_heads=num_heads):
+def get_caches_for_prompt(prompt, cache_df, hook_ids, k_tokens=200, model=model, model_name=args.model_name, num_heads=num_heads):
   with torch.no_grad():
       logits, cache = model.run_with_cache(prompt, names_filter=hook_ids, remove_batch_dim=False, prepend_bos=False)
 
@@ -79,8 +85,9 @@ def get_caches_for_prompt(prompt, cache_df, hook_ids, model=model, model_name=ar
   prompts = [prompt]*num_heads
 
   for i in cache:
-    heads = interp_attn_layer(cache[i], num_heads, k_tokens=50, model=model)
+    heads = interp_attn_layer(cache[i], num_heads, k_tokens=k_tokens, model=model)
     
+    #print(heads[0].shape)
     #need to append to pandas df
     df = pd.DataFrame({'layer': layers, 'prompt':prompts, 'head': head_nums, 'head_output':heads, 'model':models})
 
@@ -93,19 +100,22 @@ def get_caches_for_prompt(prompt, cache_df, hook_ids, model=model, model_name=ar
   return cache_df
 
 #define the dataframe to hold all the cached activations
-cache_df = pd.DataFrame(columns=['prompt', 'layer', 'head', 'head_output', 'model'])
+for sent in ['explicit_sentence', 'obscure_sentence']:
+    cache_df = pd.DataFrame(columns=['prompt', 'layer', 'head', 'head_output', 'model'])
 
-#Need to loop over full dataset
-    #for both "explicit_sentence" and "obscure_sentence"
-for i in data['explicit_sentence']:
-    cache_df = get_caches_for_prompt(i, cache_df, hook_ids, model=model, model_name=model_name, num_heads=num_heads)
-#cache_df = get_caches_for_prompt("My name is", cache_df, hook_ids, model=model, model_name=model_name, num_heads=num_heads)
+    #Need to loop over full dataset
+        #for both "explicit_sentence" and "obscure_sentence"
+    for i in data[sent]:
+        cache_df = get_caches_for_prompt(i, cache_df, hook_ids, model=model, model_name=model_name, num_heads=num_heads)
+    #cache_df = get_caches_for_prompt("My name is", cache_df, hook_ids, model=model, model_name=model_name, num_heads=num_heads)
+    #cache_df = cache_df.reset_index()
+    #print(len(cache_df['head_output'][0]))
 
-base_dir = args.save_dir+"/"
-#if dir doesn't exist make it
-if not os.path.exists(base_dir):
-    os.makedirs(base_dir) 
-full_title=f"{args.model_name}_{args.dataset}_attn_head_outputs.csv"
-print(full_title)
+    base_dir = args.save_dir+"/"
+    #if dir doesn't exist make it
+    if not os.path.exists(base_dir):
+        os.makedirs(base_dir) 
+    full_title=f"{args.model_name}_{args.dataset}_{sent}_attn_head_outputs.csv"
+    print(full_title)
 
-cache_df.to_csv(base_dir+full_title)
+    cache_df.to_csv(base_dir+full_title)
