@@ -3,6 +3,7 @@ sys.path.append("../../")
 from data.load_data import get_top_words, get_handwritten_data, get_multi_100, get_multi_1000
 
 # Import stuff
+import os
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -190,6 +191,7 @@ def fake_injections(data=data, top_words=top_words, fake_data_type="conjunctions
   if fake_data_type=="conjunctions":
     words=conjunctions
 
+  print(words)
 
   counter = 0
   for s in words:
@@ -247,7 +249,7 @@ def fake_injections(data=data, top_words=top_words, fake_data_type="conjunctions
       counter+=1
 
   data_loc = "./"
-  base_dir = data_loc+"/"+args.model+"_"+args.dataset+"_"+args.memory_dataset+"/"
+  base_dir = data_loc+"/"+args.model+"_"+args.dataset+"/"
 #if dir doesn't exist make it
   if not os.path.exists(base_dir):
       os.makedirs(base_dir) 

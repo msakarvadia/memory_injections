@@ -1,6 +1,6 @@
 #!/bin/bash 
 #PBS -l select=1
-#PBS -l walltime=24:00:00
+#PBS -l walltime=30:00:00
 #PBS -q preemptable
 #PBS -l filesystems=home:grand:eagle
 #PBS -A superbert
@@ -21,4 +21,5 @@ conda activate attnlens
 CUDA_VISIBLE_DEVICES=0, python fake_injection.py --tweak_factor 9 --layer_number 8 --model gpt2-large --dataset 2wmh --fake_data_type top_5000 &
 CUDA_VISIBLE_DEVICES=1, python fake_injection.py --tweak_factor 9 --layer_number 8 --model gpt2-large --dataset 2wmh --fake_data_type conjunctions & 
 CUDA_VISIBLE_DEVICES=2, python fake_injection.py --tweak_factor 9 --layer_number 8 --model gpt2-large --dataset 2wmh --fake_data_type adverbs &
-CUDA_VISIBLE_DEVICES=3, python fake_injection.py --tweak_factor 9 --layer_number 8 --model gpt2-large --dataset 2wmh --fake_data_type adjectives  
+CUDA_VISIBLE_DEVICES=3, python fake_injection.py --tweak_factor 9 --layer_number 8 --model gpt2-large --dataset 2wmh --fake_data_type adjectives &&
+fg
