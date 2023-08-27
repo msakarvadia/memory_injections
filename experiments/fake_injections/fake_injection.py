@@ -44,6 +44,8 @@ parser.add_argument("--tweak_factor", default=3, type=int)
 parser.add_argument("--layer_number", default=7, type=int)
 parser.add_argument("--dataset", default="hand",choices=["hand", "2wmh"],  type=str)
 parser.add_argument("--model", default="gpt2-small", choices=["gpt2-small", "gpt2-large"],  type=str)
+parser.add_argument("--save_tok", default=False, choices=[True, False],  type=bool)
+parser.add_argument("--fake_data_type", default="verbs", choices=["top_5000", "nouns", "verbs", "adjectives", "adverbs", "conjunctions"], type=str)
 args = parser.parse_args()
 
 #Get Data
@@ -153,6 +155,7 @@ def get_ans_prob(model, ans, prompt=None, logits=None):
 
 def fake_injections(data=data, top_words=top_words, fake_data_type="conjunctions", limit=200, model=model, layer=6, k=30, tweak_factor=4, full_title="GPT2_small_hand_fake_inject.csv"):
 
+  print("fake data type: ", fake_data_type)
   print("Experiment: ", full_title)
   data_cp = data.copy()
   data_cp['answer_prob_exp'] = 0
@@ -188,11 +191,13 @@ def fake_injections(data=data, top_words=top_words, fake_data_type="conjunctions
 
       print("subject: ", s)
       subject_answer_edit = 'ans_prob_obs_edit_subject_'+s
-      subject_top_k = 'topk_tok_obs_edit_subject_'+s
       #print(string)
       data_cp[subject_answer_edit] = 0
-      data_cp[subject_top_k] = ''
-      data_cp[subject_top_k] = data_cp[subject_top_k].apply(list)
+      #only save tokens if we indicate it
+      if args.save_tok:
+          subject_top_k = 'topk_tok_obs_edit_subject_'+s
+          data_cp[subject_top_k] = ''
+          data_cp[subject_top_k] = data_cp[subject_top_k].apply(list)
       #print("here")
       #average_answer_prob_change_after_edit = 0
 
@@ -216,8 +221,9 @@ def fake_injections(data=data, top_words=top_words, fake_data_type="conjunctions
         data_cp.loc[i, subject_answer_edit] = answer_prob_after_mem.item()
 
 
-        vals, idx = torch.topk(patched_logits[0][-1], k)
-        data_cp.at[i, subject_top_k]= idx.tolist()
+        if args.save_tok:
+            vals, idx = torch.topk(patched_logits[0][-1], k)
+            data_cp.at[i, subject_top_k]= idx.tolist()
 
         if counter == 0:
           answer_prob_before_mem = torch.nn.functional.softmax(logits[0][-1], dim=0)[first_answer_tok]
@@ -244,14 +250,14 @@ def fake_injections(data=data, top_words=top_words, fake_data_type="conjunctions
 #gpt2 small, 2wmh, layer 8, tweak 4
 #gpt2 small, hand, layer  7 , tweak 3
 
-fake_data_types = ["top_5000", "nouns", "verbs", "adjectives", "adverbs", "conjunctions"]
+#fake_data_types = ["top_5000", "nouns", "verbs", "adjectives", "adverbs", "conjunctions"]
 
-for fake_data_type in fake_data_types:
-    fake_injections(data=data, 
-                    top_words=top_words, 
-                    fake_data_type=fake_data_type, 
-                    model=model, 
-                    layer=args.layer_number, 
-                    k=30,
-                    tweak_factor=args.tweak_factor,
-                     full_title=f"{args.model}_{args.dataset}_fake_inject_layer{args.layer_number}_tweak{args.tweak_factor}_{fake_data_type}.csv")
+#for fake_data_type in args.fake_data_types:
+fake_injections(data=data, 
+                top_words=top_words, 
+                fake_data_type=args.fake_data_type, 
+                model=model, 
+                layer=args.layer_number, 
+                k=30,
+                tweak_factor=args.tweak_factor,
+                 full_title=f"{args.model}_{args.dataset}_fake_inject_layer{args.layer_number}_tweak{args.tweak_factor}_{args.fake_data_type}.csv")
