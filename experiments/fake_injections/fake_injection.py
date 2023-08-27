@@ -54,6 +54,11 @@ multi = get_multi_100('../../data/')
 multi_1000 = get_multi_1000('../../data/')
 top_words = get_top_words('../../data/')
 
+if(args.dataset == "data"):
+    data = data
+if(args.dataset == "2wmh"):
+    data = multi_1000
+
 print(top_words)
 
 """# Get Models"""
@@ -153,7 +158,7 @@ def get_ans_prob(model, ans, prompt=None, logits=None):
     return total_ans_prob
 
 
-def fake_injections(data=data, top_words=top_words, fake_data_type="conjunctions", limit=200, model=model, layer=6, k=30, tweak_factor=4, full_title="GPT2_small_hand_fake_inject.csv"):
+def fake_injections(data=data, top_words=top_words, fake_data_type="conjunctions", limit=40, model=model, layer=6, k=30, tweak_factor=4, full_title="GPT2_small_hand_fake_inject.csv"):
 
   print("fake data type: ", fake_data_type)
   print("Experiment: ", full_title)
@@ -205,6 +210,7 @@ def fake_injections(data=data, top_words=top_words, fake_data_type="conjunctions
       # this is a hacky way to hold the head number constant at head 0, bc it doesn't matter which head we inject into since they all get concatenated anyway
       h=0
       for i in range(num_data_points):
+        #print(i)
         answer = data['answer'][i]
         memory = s
         prompt = data['obscure_sentence'][i]
@@ -240,8 +246,13 @@ def fake_injections(data=data, top_words=top_words, fake_data_type="conjunctions
 
       counter+=1
 
-
   data_loc = "./"
+  base_dir = data_loc+"/"+args.model+"_"+args.dataset+"_"+args.memory_dataset+"/"
+#if dir doesn't exist make it
+  if not os.path.exists(base_dir):
+      os.makedirs(base_dir) 
+  #data_cp.to_csv(base_dir+full_title)
+
   data_cp.to_csv(data_loc+full_title)
   return data_cp
 

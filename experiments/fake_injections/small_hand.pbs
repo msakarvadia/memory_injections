@@ -1,0 +1,22 @@
+#!/bin/bash 
+#PBS -l select=1
+#PBS -l walltime=12:00:00
+#PBS -q preemptable
+#PBS -l filesystems=home:grand:eagle
+#PBS -A superbert
+#PBS -M sakarvadia
+
+cd "/lus/grand/projects/SuperBERT/mansisak/knowledge_tracing/experiments/fake_injections"
+echo "working dir: "
+pwd
+
+
+module load conda
+conda activate attnlens
+
+
+CUDA_VISIBLE_DEVICES=0, python fake_injection.py --tweak_factor 3 --layer_number 7 --model gpt2-small --dataset hand --fake_data_type adjectives &
+CUDA_VISIBLE_DEVICES=1, python fake_injection.py --tweak_factor 3 --layer_number 7 --model gpt2-small --dataset hand --fake_data_type adverbs &
+CUDA_VISIBLE_DEVICES=2, python fake_injection.py --tweak_factor 3 --layer_number 7 --model gpt2-small --dataset hand --fake_data_type conjunctions &
+CUDA_VISIBLE_DEVICES=3, python fake_injection.py --tweak_factor 3 --layer_number 7 --model gpt2-small --dataset hand --fake_data_type top_5000 &
+wait

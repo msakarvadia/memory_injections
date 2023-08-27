@@ -1,6 +1,6 @@
 #!/bin/bash 
 #PBS -l select=1
-#PBS -l walltime=12:00:00
+#PBS -l walltime=24:00:00
 #PBS -q preemptable
 #PBS -l filesystems=home:grand:eagle
 #PBS -A superbert
@@ -17,7 +17,8 @@ conda activate attnlens
 
 #CUDA_VISIBLE_DEVICES=0, python fake_injection.py --tweak_factor 3 --layer_number 7 --model gpt2-small --dataset hand --fake_data_type verb &
 #CUDA_VISIBLE_DEVICES=1, python fake_injection.py --tweak_factor 10 --layer_number 14 --model gpt2-large --dataset hand &
-CUDA_VISIBLE_DEVICES=0, python fake_injection.py --tweak_factor 5 --layer_number 6 --model gpt2-small --dataset top_5000 &
-CUDA_VISIBLE_DEVICES=1, python fake_injection.py --tweak_factor 5 --layer_number 6 --model gpt2-small --dataset conjunctions &
-CUDA_VISIBLE_DEVICES=2, python fake_injection.py --tweak_factor 5 --layer_number 6 --model gpt2-small --dataset adverbs &
-CUDA_VISIBLE_DEVICES=3, python fake_injection.py --tweak_factor 5 --layer_number 6 --model gpt2-small --dataset adjectives &
+CUDA_VISIBLE_DEVICES=0, python fake_injection.py --tweak_factor 5 --layer_number 6 --model gpt2-small --dataset 2wmh --fake_data_type top_5000 &
+CUDA_VISIBLE_DEVICES=1, python fake_injection.py --tweak_factor 5 --layer_number 6 --model gpt2-small --dataset 2wmh --fake_data_type conjunctions &
+CUDA_VISIBLE_DEVICES=2, python fake_injection.py --tweak_factor 5 --layer_number 6 --model gpt2-small --dataset 2wmh --fake_data_type adverbs &
+CUDA_VISIBLE_DEVICES=3, python fake_injection.py --tweak_factor 5 --layer_number 6 --model gpt2-small --dataset 2wmh --fake_data_type adjectives &&
+fg
