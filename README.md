@@ -1,6 +1,5 @@
-# knowledge_tracing
-Initial Exploratory Works on Knowledge Tracing in Transformer Based Language Models
-
+# Memory Injections
+Initial exploratory work on using novel "memory injections" to correct multi-hop reasoning capabilities of pretrained language models during inference.
 
 Better docs coming soon :)
 
