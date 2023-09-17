@@ -18,3 +18,18 @@ conda create --name env python==3.10
 conda activate env
 pip install -r requirements.txt
 ```
+## Citation
+
+Please cite this work as:
+
+
+
+```
+@article{sakarvadia2023memory,
+  title={Memory Injections: Correcting Multi-Hop Reasoning Failures during Inference in Transformer-Based Language Models},
+  author={Sakarvadia, Mansi and Ajith, Aswathy and Khan, Arham and Grzenda, Daniel and Hudson, Nathaniel and Bauer, Andr{\'e} and Chard, Kyle and Foster, Ian},
+  journal={arXiv preprint arXiv:2309.05605},
+  year={2023}
+}
+```
+
