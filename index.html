@@ -24,7 +24,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-  <title>Academic Project Page</title>
+  <title>Memory Injections</title>
   <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
   rel="stylesheet">
@@ -52,28 +52,42 @@
       <div class="container is-max-desktop">
         <div class="columns is-centered">
           <div class="column has-text-centered">
-            <h1 class="title is-1 publication-title">Memory Injections: ...</h1>
+            <h1 class="title is-1 publication-title">Memory Injections: Correcting Multi-Hop Reasoning Failures during Inference in Transformer-Based Language Models</h1>
             <div class="is-size-5 publication-authors">
               <!-- Paper authors -->
               <span class="author-block">
-                <a href="FIRST AUTHOR PERSONAL LINK" target="_blank">Mansi Sakarvadia</a><sup>*</sup>,</span>
+                <a href="https://msakarvadia.github.io/" target="_blank">Mansi Sakarvadia</a>,</span>
                 <span class="author-block">
-                  <a href="SECOND AUTHOR PERSONAL LINK" target="_blank">Second Author</a><sup>*</sup>,</span>
+                  <a href="SECOND AUTHOR PERSONAL LINK" target="_blank">Aswathy Ajith</a>,</span>
                   <span class="author-block">
-                    <a href="THIRD AUTHOR PERSONAL LINK" target="_blank">Third Author</a>
+                    <a href="THIRD AUTHOR PERSONAL LINK" target="_blank">Arham Khan</a>,
+                  </span>
+                  <span class="author-block">
+                    <a href="THIRD AUTHOR PERSONAL LINK" target="_blank">Daniel Grzenda</a>,
+                  </span>
+                  <span class="author-block">
+                    <a href="THIRD AUTHOR PERSONAL LINK" target="_blank">Nathaniel Hudson</a>,
+                  </span>
+                  <span class="author-block">
+                    <a href="THIRD AUTHOR PERSONAL LINK" target="_blank">Andr&#xE9 Bauer</a>,
+                  </span>
+                  <span class="author-block">
+                    <a href="THIRD AUTHOR PERSONAL LINK" target="_blank">Kyle Chard</a>,
+                  </span>
+                  <span class="author-block">
+                    <a href="THIRD AUTHOR PERSONAL LINK" target="_blank">Ian Foster</a>
                   </span>
                   </div>
 
                   <div class="is-size-5 publication-authors">
                     <span class="author-block">The University of Chicago<br>BlackboxNLP, EMNLP 2023</span>
-                    <span class="eql-cntrb"><small><br><sup>*</sup>Indicates Equal Contribution</small></span>
                   </div>
 
                   <div class="column has-text-centered">
                     <div class="publication-links">
                          <!-- Arxiv PDF link -->
                       <span class="link-block">
-                        <a href="https://arxiv.org/pdf/<ARXIV PAPER ID>.pdf" target="_blank"
+                        <a href="https://arxiv.org/pdf/2309.05605.pdf" target="_blank"
                         class="external-link button is-normal is-rounded is-dark">
                         <span class="icon">
                           <i class="fas fa-file-pdf"></i>
@@ -82,7 +96,7 @@
                       </a>
                     </span>
 
-                    <!-- Supplementary PDF link -->
+                    <!-- Supplementary PDF link 
                     <span class="link-block">
                       <a href="static/pdfs/supplementary_material.pdf" target="_blank"
                       class="external-link button is-normal is-rounded is-dark">
@@ -92,10 +106,11 @@
                       <span>Supplementary</span>
                     </a>
                   </span>
+				  -->
 
                   <!-- Github link -->
                   <span class="link-block">
-                    <a href="https://github.com/YOUR REPO HERE" target="_blank"
+                    <a href="https://github.com/msakarvadia/memory_injections" target="_blank"
                     class="external-link button is-normal is-rounded is-dark">
                     <span class="icon">
                       <i class="fab fa-github"></i>
@@ -106,7 +121,7 @@
 
                 <!-- ArXiv abstract Link -->
                 <span class="link-block">
-                  <a href="https://arxiv.org/abs/<ARXIV PAPER ID>" target="_blank"
+                  <a href="https://arxiv.org/abs/2309.05605" target="_blank"
                   class="external-link button is-normal is-rounded is-dark">
                   <span class="icon">
                     <i class="ai ai-arxiv"></i>
@@ -148,7 +163,7 @@
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ullamcorper tellus sed ante aliquam tempus. Etiam porttitor urna feugiat nibh elementum, et tempor dolor mattis. Donec accumsan enim augue, a vulputate nisi sodales sit amet. Proin bibendum ex eget mauris cursus euismod nec et nibh. Maecenas ac gravida ante, nec cursus dui. Vivamus purus nibh, placerat ac purus eget, sagittis vestibulum metus. Sed vestibulum bibendum lectus gravida commodo. Pellentesque auctor leo vitae sagittis suscipit.
+		  Answering multi-hop reasoning questions requires retrieving and synthesizing information from diverse sources. Large Language Models (LLMs) struggle to perform such reasoning consistently. Here we propose an approach to pinpoint and rectify multi-hop reasoning failures through targeted memory injections on LLM attention heads. First, we analyze the per-layer activations of GPT-2 models in response to single and multi-hop prompts. We then propose a mechanism that allows users to inject pertinent prompt-specific information, which we refer to as "memories," at critical LLM locations during inference. By thus enabling the LLM to incorporate additional relevant information during inference, we enhance the quality of multi-hop prompt completions. We show empirically that a simple, efficient, and targeted memory injection into a key attention layer can often increase the probability of the desired next token in multi-hop tasks, by up to 424%.
           </p>
         </div>
       </div>
