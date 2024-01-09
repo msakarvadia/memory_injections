@@ -6,6 +6,8 @@ This repo contains the code that was used to conduct the experiments in this [pa
 
 To get a quick introduction to the methods used in this work, checkout this [`demo`](https://colab.research.google.com/drive/1H1jjrdMDRoGj5qRGvAuWuwq1dgIDWjQw?usp=sharing). This demo is also linked under the `demos` folder in this repo.
 
+The handwritten dataset we generated in this paper can be found on [`HuggingFace`](https://huggingface.co/datasets/msakarvadia/handwritten_multihop_reasoning_data).
+
 Answering multi-hop reasoning questions requires retrieving and synthesizing information from diverse sources. Large Language Models (LLMs) struggle to perform such reasoning consistently. Here we propose an approach to pinpoint and rectify multi-hop reasoning failures through targeted memory injections on LLM attention heads. First, we analyze the per-layer activations of GPT-2 models in response to single and multi-hop prompts. We then propose a mechanism that allows users to inject pertinent prompt-specific information, which we refer to as "memories," at critical LLM locations during inference. By thus enabling the LLM to incorporate additional relevant information during inference, we enhance the quality of multi-hop prompt completions. We show empirically that a simple, efficient, and targeted memory injection into a key attention layer can often increase the probability of the desired next token in multi-hop tasks, by up to 424%.
 
 ![picture](https://drive.google.com/uc?export=view&id=11PXMPvywR_ZtQNLM615-KB7ltfc0yivM)
