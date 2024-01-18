@@ -39,7 +39,7 @@ def apply_edit(model, extra_memory, prompt, tweak_factor=4, layer=10, head_num=0
   # Use functools.partial to create a temporary hook function with the position fixed
   temp_hook_fn = partial(memory_tweaker_head_hook,
                         extra_info= extra_memory, #"Barak Obama",
-                        vocab_size=50257,
+                        vocab_size=model.cfg.d_vocab, #TODO set this to be model.cfg.vocab_size
                         model=model,
                         tweak_factor=tweak_factor,
                         head_num=head_num)

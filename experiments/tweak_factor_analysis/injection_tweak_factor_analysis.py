@@ -4,22 +4,8 @@ from data.load_data import get_handwritten_data, get_multi_100, get_multi_1000
 from utils import reject_outliers, get_ans_prob, apply_edit, memory_tweaker_head_hook, head_latent_space_projector
 import torch
 from transformer_lens import HookedTransformer, HookedTransformerConfig, FactoredMatrix, ActivationCache
+from transformers import LlamaForCausalLM, LlamaTokenizer
 
-torch.set_grad_enabled(False)
-
-"""# Get Models"""
-
-device = "cuda" if torch.cuda.is_available() else "cpu"
-
-gpt2_small = HookedTransformer.from_pretrained("gpt2-small", device=device)
-gpt2_large = HookedTransformer.from_pretrained("gpt2-large", device=device)
-gpt2_small.cfg.use_attn_result = True
-gpt2_large.cfg.use_attn_result = True
-
-#Get Data
-data = get_handwritten_data('../../data/')
-multi = get_multi_100('../../data/')
-multi_1000 = get_multi_1000('../../data/')
 
 
 # We are going to define a more general purpose editing function which records more useful metrics up front so that we can do post-analysis later
@@ -77,7 +63,7 @@ def edit_heatmap(data, model, layers=12, heads=1, tweak_factor=4, k=30, print_ou
   return data_cp
 
 # Function to vary the tweak factor
-def tweak_factor_vary(tweak_factors, data, model=gpt2_small, layers=12, title="gpt2_small_subject_edits", data_loc = "drive/MyDrive/Research/Mechanistic Interpretability/Figures/Fig_data/"):
+def tweak_factor_vary(tweak_factors, data, model, layers, title="gpt2_small_subject_edits", data_loc = "drive/MyDrive/Research/Mechanistic Interpretability/Figures/Fig_data/"):
   for i in tweak_factors:
     full_title = title+"_tweakFactor_"+str(i)+".csv"
     print(full_title)
@@ -96,6 +82,7 @@ if __name__=="__main__":
     multi_1000 = get_multi_1000('../../data/')
 
     models = [
+    "meta-llama/Llama-2-7b-hf",
     "gpt2-small",
     "gpt2-large",
     "meta-llama/Llama-2-70b-chat-hf",
@@ -116,6 +103,23 @@ if __name__=="__main__":
     for model_name in models:
         if "gpt" in model_name:
             model = HookedTransformer.from_pretrained(model_name, device=device)
+        if "llama" in model_name:
+            tokenizer = LlamaTokenizer.from_pretrained(model_name)
+            hf_model = LlamaForCausalLM.from_pretrained(model_name, 
+                                                    low_cpu_mem_usage=True,
+                                                    torch_dtype=torch.float16
+                                                   )
+
+            #Load model into TransformerLens template
+            model = HookedTransformer.from_pretrained(model_name, 
+                                                     hf_model=hf_model, 
+                                                     tokenizer=tokenizer,
+                                                     device="cpu", 
+                                                     fold_ln=False, 
+                                                     center_writing_weights=False, 
+                                                     center_unembed=False)
+            model = model.to("cuda" if torch.cuda.is_available() else "cpu")
+            print(model.cfg)
 
         #cache individual outputs of attention heads
         model.cfg.use_attn_result = True
