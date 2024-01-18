@@ -1,5 +1,5 @@
 import sys
-sys.path.append("../")
+sys.path.append("../../")
 from data.load_data import get_handwritten_data, get_multi_100, get_multi_1000
 from utils import reject_outliers, get_ans_prob, apply_edit, memory_tweaker_head_hook, head_latent_space_projector
 import torch
@@ -17,9 +17,9 @@ gpt2_small.cfg.use_attn_result = True
 gpt2_large.cfg.use_attn_result = True
 
 #Get Data
-data = get_handwritten_data('../data/')
-multi = get_multi_100('../data/')
-multi_1000 = get_multi_1000('../data/')
+data = get_handwritten_data('../../data/')
+multi = get_multi_100('../../data/')
+multi_1000 = get_multi_1000('../../data/')
 
 
 # We are going to define a more general purpose editing function which records more useful metrics up front so that we can do post-analysis later
@@ -101,3 +101,4 @@ tweak_factor_vary(tweak_factors, data, gpt2_large, 36, title="gpt2_large_subject
 
 #tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
 #tweak_factor_vary(tweak_factors, multi_1000, gpt2_large, 36, title="gpt2_large_subject_edits_2wmh")
+
