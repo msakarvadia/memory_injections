@@ -88,52 +88,17 @@ def tweak_factor_vary(tweak_factors, data, model=gpt2_small, layers=12, title="g
     data_cp.to_csv(data_loc+full_title)
 
 #Experiments
-if __name__=="__main__":
 
-    #Get Data
-    data = get_handwritten_data('../../data/')
-    multi = get_multi_100('../../data/')
-    multi_1000 = get_multi_1000('../../data/')
+tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+tweak_factor_vary(tweak_factors, data, gpt2_small, 12, title="gpt2_small_subject_edits_hand")
 
-    models = [
-    "gpt2-small",
-    "gpt2-large",
-    "meta-llama/Llama-2-70b-chat-hf",
-    "meta-llama/Llama-2-70b-hf",
-    "meta-llama/Llama-2-7b-chat-hf",
-    "meta-llama/Llama-2-7b-hf",
-    "meta-llama/Llama-2-13b-chat-hf",
-    "meta-llama/Llama-2-13b-hf",
-    ]
+tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+tweak_factor_vary(tweak_factors, data, gpt2_large, 36, title="gpt2_large_subject_edits_hand")
 
-    torch.set_grad_enabled(False)
+#tweak_factors = [6,7,8,9,10,11,12,13,14,15]
+#tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+#tweak_factor_vary(tweak_factors, multi_1000, gpt2_small, 12, title="gpt2_small_subject_edits_2wmh")
 
-    """# Get Models"""
-
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-
-    #iterate over models
-    for model_name in models:
-        if "gpt" in model_name:
-            model = HookedTransformer.from_pretrained(model_name, device=device)
-
-        #cache individual outputs of attention heads
-        model.cfg.use_attn_result = True
-        print(model.cfg)
-        break
-
-
-        # define all tweak factor ranges we are interested in
-        tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-        tweak_factor_vary(tweak_factors, data, model, 12, title=model_name+"_subject_edits_hand")
-
-    #tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-    #tweak_factor_vary(tweak_factors, data, gpt2_large, 36, title="gpt2_large_subject_edits_hand")
-
-    #tweak_factors = [6,7,8,9,10,11,12,13,14,15]
-    #tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-    #tweak_factor_vary(tweak_factors, multi_1000, gpt2_small, 12, title="gpt2_small_subject_edits_2wmh")
-
-    #tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-    #tweak_factor_vary(tweak_factors, multi_1000, gpt2_large, 36, title="gpt2_large_subject_edits_2wmh")
+#tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+#tweak_factor_vary(tweak_factors, multi_1000, gpt2_large, 36, title="gpt2_large_subject_edits_2wmh")
 
