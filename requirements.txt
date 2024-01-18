@@ -56,7 +56,7 @@ nvidia-nvtx-cu11==11.7.91
 packaging==23.1
 pandas==2.0.3
 pathtools==0.1.2
-Pillow==9.4.0
+Pillow==10.0.1
 pluggy==1.3.0
 ply==3.11
 protobuf==4.23.4
