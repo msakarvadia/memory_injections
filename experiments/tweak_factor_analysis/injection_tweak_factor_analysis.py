@@ -115,11 +115,14 @@ if __name__=="__main__":
                                                      hf_model=hf_model, 
                                                      tokenizer=tokenizer,
                                                      device="cpu", 
+                                                    # device="cuda", 
                                                      fold_ln=False, 
                                                      center_writing_weights=False, 
-                                                     center_unembed=False)
-            model = model.to("cuda" if torch.cuda.is_available() else "cpu")
-            print(model.cfg)
+                                                     center_unembed=False,
+                                                    # n_devices=4
+                                                    ) #can load model onto multiple devices but have trouble running hooks
+        model = model.to("cuda" if torch.cuda.is_available() else "cpu")
+        print(model.cfg)
 
         #cache individual outputs of attention heads
         model.cfg.use_attn_result = True
@@ -127,6 +130,7 @@ if __name__=="__main__":
         # define all tweak factor ranges we are interested in
         tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
         tweak_factor_vary(tweak_factors, data, model, layers= model.cfg.n_layers, title=model_name+"_subject_edits_hand")
+        tweak_factor_vary(tweak_factors, multi_1000, model, layers= model.cfg.n_layers, title=model_name+"_subject_edits_2wmh")
 
     #tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
     #tweak_factor_vary(tweak_factors, data, gpt2_large, 36, title="gpt2_large_subject_edits_hand")
