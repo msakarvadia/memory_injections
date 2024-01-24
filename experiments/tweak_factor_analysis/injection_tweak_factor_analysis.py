@@ -9,7 +9,7 @@ from transformers import LlamaForCausalLM, LlamaTokenizer
 
 
 # We are going to define a more general purpose editing function which records more useful metrics up front so that we can do post-analysis later
-def edit_heatmap(data, model, layers=12, heads=1, tweak_factor=4, k=30, print_output=True):
+def edit_heatmap(data, model, dtype, layers=12, heads=1, tweak_factor=4, k=30, print_output=True):
   num_data_points = len(data['answer'])
 
   data_cp = data.copy()
@@ -35,6 +35,7 @@ def edit_heatmap(data, model, layers=12, heads=1, tweak_factor=4, k=30, print_ou
         logits, patched_logits = apply_edit(model,
                                           memory,
                                           prompt,
+                                          dtype=dtype,
                                           tweak_factor=tweak_factor,
                                           layer=l,
                                           head_num=h)
@@ -63,12 +64,12 @@ def edit_heatmap(data, model, layers=12, heads=1, tweak_factor=4, k=30, print_ou
   return data_cp
 
 # Function to vary the tweak factor
-def tweak_factor_vary(tweak_factors, data, model, layers, title="gpt2_small_subject_edits", data_loc = "drive/MyDrive/Research/Mechanistic Interpretability/Figures/Fig_data/"):
+def tweak_factor_vary(tweak_factors, data, model, layers, dtype, title="gpt2_small_subject_edits", data_loc = "drive/MyDrive/Research/Mechanistic Interpretability/Figures/Fig_data/"):
   for i in tweak_factors:
     full_title = title+"_tweakFactor_"+str(i)+".csv"
     print(full_title)
 
-    data_cp = edit_heatmap(data, model, layers=layers, heads=1, tweak_factor=i)
+    data_cp = edit_heatmap(data, model, dtype, layers=layers, heads=1, tweak_factor=i)
 
     data_loc = "./"
     data_cp.to_csv(data_loc+full_title)
@@ -82,8 +83,14 @@ if __name__=="__main__":
     multi_1000 = get_multi_1000('../../data/')
 
     models = [
-    "mistralai/Mistral-7B-v0.1", 
-    "mistralai/Mistral-7B-Instruct-v0.1",
+    "EleutherAI/gpt-neo-125M",
+    "EleutherAI/gpt-neo-1.3B",
+    "EleutherAI/gpt-neo-2.7B",
+    "EleutherAI/gpt-j-6B",
+    "EleutherAI/gpt-neox-20b",
+    #"mistralai/Mistral-7B-v0.1", 
+    #"mistralai/Mistral-7B-Instruct-v0.1",
+    "gpt2-xl",
     "meta-llama/Llama-2-7b-hf",
     "gpt2-small",
     "gpt2-large",
@@ -101,11 +108,16 @@ if __name__=="__main__":
     """# Get Models"""
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
+    dtype = torch.float32
 
     #iterate over models
     for model_name in models:
-        if ("gpt" in model_name) or ("mistral" in model_name):
-            model = HookedTransformer.from_pretrained(model_name, device=device)
+        if ("gpt" or "mistral" or "eleuther") in model_name:
+        #if ("gpt" in model_name) or ("mistral" in model_name) or ("eluthur" in model_name):
+            model = HookedTransformer.from_pretrained(model_name, 
+                                                    device=device,
+                                                    dtype=dtype)
+            print(model.cfg)
         if "llama" in model_name:
             tokenizer = LlamaTokenizer.from_pretrained(model_name)
             hf_model = LlamaForCausalLM.from_pretrained(model_name, 
@@ -142,7 +154,7 @@ if __name__=="__main__":
 
         # define all tweak factor ranges we are interested in
         tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-        tweak_factor_vary(tweak_factors, data, model, layers= model.cfg.n_layers, title=model_name+"_subject_edits_hand")
+        tweak_factor_vary(tweak_factors, data, model, dtype=dtype, layers=model.cfg.n_layers, title=model_name+"_subject_edits_hand")
         #tweak_factor_vary(tweak_factors, multi_1000, model, layers= model.cfg.n_layers, title=model_name+"_subject_edits_2wmh")
 
     #tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
