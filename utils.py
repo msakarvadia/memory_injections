@@ -69,37 +69,19 @@ def memory_tweaker_head_hook(
     #cache: transformer_lens.ActivationCache #this is the
 ) -> Float[torch.Tensor, "batch pos d_model"]:
 
-
-
-    #print("Hook point: ", hook.name)
-    #print("head num: ", head_num)
-    #tokenize string
     tok_extra_info = model.to_tokens(extra_info, prepend_bos=False)
-    #print(tok_extra_info)
 
-    #transform tokens into one-hot vector
-    #TODO: switch back to zeros
+    #extra_memory = torch.zeros(vocab_size)
     extra_memory = torch.zeros(vocab_size).to(device)
-    #extra_memory = torch.ones(vocab_size)
-    #TODO: need to put a one in the spot with all of the extra info tokens and mult by tweak factor
     for i in tok_extra_info:
       extra_memory[i] = 1
 
-    #subtract bias, and apply transpose of unembeding matrix to tokenized string to get it into model's hidden dim
-    #extra_memory = extra_memory - model.unembed.b_U
-    extra_memory = einsum("d_vocab, d_vocab d_model-> d_model", extra_memory, model.W_U.T)
-
-    #TODO think about how layer norm would imapct things
+    #extra_memory = einsum("d_vocab, d_vocab d_model-> d_model", extra_memory, W_U.T)
+    extra_memory = einsum("d_vocab, d_vocab d_model-> d_model", extra_memory, model.W_U.T) #this line works
 
     #add the extra_info embedded in latent space to hook_attn_out
-    #print(attn_result.shape)
     attn_result[:,:,head_num,:] = attn_result[:,:,head_num,:] + extra_memory * tweak_factor
-    #attn_result[:,:,head_num,:] + extra_memory * tweak_factor
-    #print(attn_result[:,:,head_num,:])
 
-    # TODO: Add a "jiggle" feature here.
-
-    #return this edited hook_attn_out
     return attn_result
 
 def head_latent_space_projector(model, prompt, k_tokens, num_heads, aggregate_heads=True, intermediate_tokens=True):

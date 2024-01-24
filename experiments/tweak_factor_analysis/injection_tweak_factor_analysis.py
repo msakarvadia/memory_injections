@@ -85,12 +85,13 @@ if __name__=="__main__":
     "meta-llama/Llama-2-7b-hf",
     "gpt2-small",
     "gpt2-large",
-    "meta-llama/Llama-2-70b-chat-hf",
-    "meta-llama/Llama-2-70b-hf",
+    #"meta-llama/Llama-2-70b-chat-hf",
+    #"meta-llama/Llama-2-70b-hf",
     "meta-llama/Llama-2-7b-chat-hf",
     "meta-llama/Llama-2-7b-hf",
-    "meta-llama/Llama-2-13b-chat-hf",
-    "meta-llama/Llama-2-13b-hf",
+    #"meta-llama/Llama-2-13b-chat-hf",
+    #"meta-llama/Llama-2-13b-hf",
+    #"meta-llama/Llama-2-13b-hf",
     ]
 
     torch.set_grad_enabled(False)
@@ -109,12 +110,21 @@ if __name__=="__main__":
                                                     low_cpu_mem_usage=True,
                                                     torch_dtype=torch.float16
                                                    )
+            print("Model:")
+            print(hf_model)
+            print("dir:")
+            print(dir(hf_model))
+            print("vars:")
+            print(vars(hf_model))
+            print("forward")
+            print(hf_model.forward)
+
 
             #Load model into TransformerLens template
             model = HookedTransformer.from_pretrained(model_name, 
-                                                     hf_model=hf_model, 
+                                                   #  hf_model=hf_model, 
                                                      tokenizer=tokenizer,
-                                                     device="cpu", 
+                                                      device="cpu", 
                                                     # device="cuda", 
                                                      fold_ln=False, 
                                                      center_writing_weights=False, 
@@ -123,6 +133,7 @@ if __name__=="__main__":
                                                     ) #can load model onto multiple devices but have trouble running hooks
         model = model.to("cuda" if torch.cuda.is_available() else "cpu")
         print(model.cfg)
+        print(model.generate("The capital of Germany is", max_new_tokens=20, temperature=0))
 
         #cache individual outputs of attention heads
         model.cfg.use_attn_result = True
@@ -130,7 +141,7 @@ if __name__=="__main__":
         # define all tweak factor ranges we are interested in
         tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
         tweak_factor_vary(tweak_factors, data, model, layers= model.cfg.n_layers, title=model_name+"_subject_edits_hand")
-        tweak_factor_vary(tweak_factors, multi_1000, model, layers= model.cfg.n_layers, title=model_name+"_subject_edits_2wmh")
+        #tweak_factor_vary(tweak_factors, multi_1000, model, layers= model.cfg.n_layers, title=model_name+"_subject_edits_2wmh")
 
     #tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
     #tweak_factor_vary(tweak_factors, data, gpt2_large, 36, title="gpt2_large_subject_edits_hand")
