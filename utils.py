@@ -35,9 +35,9 @@ def interpret_logits_as_vocab(model, logits, top_k=30):
   topk_token_vals_edit, topk_token_preds_edit = torch.topk(logits, top_k)
   return model.to_string(topk_token_preds_edit[0][-1])
 
-def apply_edit(model, extra_memory, prompt, dtype, tweak_factor=4, layer=10, head_num=0 ):
+def apply_edit(model, extra_memory, prompt, dtype, hook_func, tweak_factor=4, layer=10, head_num=0 ):
   # Use functools.partial to create a temporary hook function with the position fixed
-  temp_hook_fn = partial(memory_tweaker_head_hook,
+  temp_hook_fn = partial(hook_func,
                         extra_info= extra_memory, #"Barak Obama",
                         vocab_size=model.cfg.d_vocab, #TODO set this to be model.cfg.vocab_size
                         model=model,
@@ -59,7 +59,7 @@ def apply_edit(model, extra_memory, prompt, dtype, tweak_factor=4, layer=10, hea
                             )
   return logits, patched_logits
 
-def memory_tweaker_head_hook(
+def memory_tweaker_unembed_head_hook(
     attn_result: Float[torch.Tensor, "num_tokens num_heads d_model"],
     hook: HookPoint, #name of layer where we inject memory
     extra_info: str, #the string that we tokenize and then inject into memory
@@ -80,6 +80,32 @@ def memory_tweaker_head_hook(
 
     #extra_memory = einsum("d_vocab, d_vocab d_model-> d_model", extra_memory, W_U.T)
     extra_memory = einsum("d_vocab, d_vocab d_model-> d_model", extra_memory, model.W_U.T) #this line works
+
+    #add the extra_info embedded in latent space to hook_attn_out
+    attn_result[:,:,head_num,:] = attn_result[:,:,head_num,:] + extra_memory * tweak_factor
+
+    return attn_result
+
+def memory_tweaker_embed_head_hook(
+    attn_result: Float[torch.Tensor, "num_tokens num_heads d_model"],
+    hook: HookPoint, #name of layer where we inject memory
+    extra_info: str, #the string that we tokenize and then inject into memory
+    model: transformer_lens.HookedTransformer, #the model from which we get the unembedding matrix from
+    vocab_size: int, #size of model vocabulary
+    tweak_factor: float,
+    head_num: int, #The number of the head we want to edit
+    dtype, #The torch dtype we want to use
+    #cache: transformer_lens.ActivationCache #this is the
+) -> Float[torch.Tensor, "batch pos d_model"]:
+
+    tok_extra_info = model.to_tokens(extra_info, prepend_bos=False)
+
+    #extra_memory = torch.zeros(vocab_size)
+    extra_memory = torch.zeros(vocab_size, dtype=dtype).to(device)
+    for i in tok_extra_info:
+      extra_memory[i] = 1
+
+    extra_memory = einsum("d_vocab, d_vocab d_model-> d_model", extra_memory, model.W_E) #this line works
 
     #add the extra_info embedded in latent space to hook_attn_out
     attn_result[:,:,head_num,:] = attn_result[:,:,head_num,:] + extra_memory * tweak_factor

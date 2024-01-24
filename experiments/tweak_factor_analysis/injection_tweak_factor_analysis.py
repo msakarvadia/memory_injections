@@ -1,7 +1,10 @@
 import sys
 sys.path.append("../../")
 from data.load_data import get_handwritten_data, get_multi_100, get_multi_1000
-from utils import reject_outliers, get_ans_prob, apply_edit, memory_tweaker_head_hook, head_latent_space_projector
+from utils import (reject_outliers, get_ans_prob, apply_edit,
+                head_latent_space_projector,
+                memory_tweaker_unembed_head_hook,
+                memory_tweaker_embed_head_hook)
 import torch
 from transformer_lens import HookedTransformer, HookedTransformerConfig, FactoredMatrix, ActivationCache
 from transformers import LlamaForCausalLM, LlamaTokenizer
@@ -35,6 +38,7 @@ def edit_heatmap(data, model, dtype, layers=12, heads=1, tweak_factor=4, k=30, p
         logits, patched_logits = apply_edit(model,
                                           memory,
                                           prompt,
+                                          hook_func=memory_tweaker_embed_head_hook,
                                           dtype=dtype,
                                           tweak_factor=tweak_factor,
                                           layer=l,
