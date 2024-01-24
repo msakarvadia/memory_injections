@@ -66,6 +66,7 @@ def edit_heatmap(data, model, dtype, hook_func, layers=12, heads=1, tweak_factor
         print("Average Answer probability difference after edit: ", (data_cp[layer_answer_edit] -data_cp['answer_prob_obs']).mean())
         print("Average Percent increase in Answer probability difference after edit: ", ((data_cp[layer_answer_edit] -data_cp['answer_prob_obs'])/ data_cp['answer_prob_obs']).mean() * 100)
 
+  print(data_cp)
   return data_cp
 
 # Function to vary the tweak factor
@@ -115,6 +116,7 @@ def get_model(model_name:str, dtype, device):
         return model
 
 def namestr(obj, namespace):
+    """ This function is how you grab the name of a variable"""
     return [str(name) for name in namespace if namespace[name] is obj]
 
 #Experiments
@@ -127,6 +129,7 @@ if __name__=="__main__":
     datasets = [multi_1000, data]
 
     models = [
+    "gpt2-large",
     "meta-llama/Llama-2-7b-chat-hf",
     "meta-llama/Llama-2-7b-hf",
     "EleutherAI/gpt-neo-125M",
@@ -136,7 +139,6 @@ if __name__=="__main__":
     "EleutherAI/gpt-neox-20b",
     "gpt2-xl",
     "gpt2-small",
-    "gpt2-large",
     ]
 
     models_need_more_compute = [
@@ -154,8 +156,6 @@ if __name__=="__main__":
 
     torch.set_grad_enabled(False)
 
-    """# Get Models"""
-
     device = "cuda" if torch.cuda.is_available() else "cpu"
     dtype = torch.float32
 
@@ -166,25 +166,27 @@ if __name__=="__main__":
 
         for d in datasets:
             #iterate over hook types
-
             for hook in hook_types:
-                #TODO geneate descriptive title/data output location
+                #if model has tied embeddings, don't do both unembed + embed hook
+                if ("gpt2") in model_name and hook == memory_tweaker_unembed_head_hook:
+                    print("Model has tied embedding/unembedding, so we don't do redundant hooks")
+                    continue
                 save_dir =namestr(d, globals())[0]+"/"+model_name+"/"+namestr(hook, globals())[0]+"/"
                 #make save_dir if it doesn't exist
                 os.makedirs(save_dir, exist_ok=True)
-                print(namestr(hook, globals())[0])
-                print(namestr(d, globals())[0])
-                print(model_name)
 
                 # define all tweak factor ranges we are interested in
                 tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
                 for i in tweak_factors:
                     full_title = save_dir+"tweak_"+str(i)+".csv"
                     print(full_title)
-
-
-                    data_cp = edit_heatmap(data, model, dtype, hook, layers=model.cfg.n_layers, heads=1, tweak_factor=i)
-
-                    data_cp.to_csv(full_title)
-                #tweak_factor_vary(tweak_factors=tweak_factors,data=d, model=model, dtype=dtype, hook_func=hook, layers=model.cfg.n_layers, title=model_name+"_subject_edits_hand")
-
+                    #If we havn't already generated this datafile, generate
+                    if not os.path.exists(full_title):
+                        print("We have not done this experiment. Computing now!")
+                        data_cp = edit_heatmap(d, model, dtype, hook, layers=model.cfg.n_layers, heads=1, tweak_factor=i)
+                        print(data_cp)
+                        data_cp.to_csv("test.csv")
+                        data_loc = "./"
+                        data_cp.to_csv(data_loc+full_title)
+                    else:
+                        print("we have already calculated this dataset")
