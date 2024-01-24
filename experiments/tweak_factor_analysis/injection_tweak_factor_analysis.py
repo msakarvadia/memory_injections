@@ -82,6 +82,8 @@ if __name__=="__main__":
     multi_1000 = get_multi_1000('../../data/')
 
     models = [
+    "mistralai/Mistral-7B-v0.1", 
+    "mistralai/Mistral-7B-Instruct-v0.1",
     "meta-llama/Llama-2-7b-hf",
     "gpt2-small",
     "gpt2-large",
@@ -102,7 +104,7 @@ if __name__=="__main__":
 
     #iterate over models
     for model_name in models:
-        if "gpt" in model_name:
+        if ("gpt" in model_name) or ("mistral" in model_name):
             model = HookedTransformer.from_pretrained(model_name, device=device)
         if "llama" in model_name:
             tokenizer = LlamaTokenizer.from_pretrained(model_name)
