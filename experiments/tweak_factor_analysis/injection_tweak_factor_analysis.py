@@ -1,4 +1,5 @@
 import sys
+import os
 sys.path.append("../../")
 from data.load_data import get_handwritten_data, get_multi_100, get_multi_1000
 from utils import (reject_outliers, get_ans_prob, apply_edit,
@@ -12,7 +13,7 @@ from transformers import LlamaForCausalLM, LlamaTokenizer
 
 
 # We are going to define a more general purpose editing function which records more useful metrics up front so that we can do post-analysis later
-def edit_heatmap(data, model, dtype, layers=12, heads=1, tweak_factor=4, k=30, print_output=True):
+def edit_heatmap(data, model, dtype, hook_func, layers=12, heads=1, tweak_factor=4, k=30, print_output=True):
   num_data_points = len(data['answer'])
 
   data_cp = data.copy()
@@ -38,7 +39,7 @@ def edit_heatmap(data, model, dtype, layers=12, heads=1, tweak_factor=4, k=30, p
         logits, patched_logits = apply_edit(model,
                                           memory,
                                           prompt,
-                                          hook_func=memory_tweaker_embed_head_hook,
+                                          hook_func=hook_func,
                                           dtype=dtype,
                                           tweak_factor=tweak_factor,
                                           layer=l,
@@ -68,15 +69,53 @@ def edit_heatmap(data, model, dtype, layers=12, heads=1, tweak_factor=4, k=30, p
   return data_cp
 
 # Function to vary the tweak factor
-def tweak_factor_vary(tweak_factors, data, model, layers, dtype, title="gpt2_small_subject_edits", data_loc = "drive/MyDrive/Research/Mechanistic Interpretability/Figures/Fig_data/"):
+def tweak_factor_vary(tweak_factors, data, model, layers, hook_func, dtype, title="gpt2_small_subject_edits"):
   for i in tweak_factors:
     full_title = title+"_tweakFactor_"+str(i)+".csv"
     print(full_title)
 
-    data_cp = edit_heatmap(data, model, dtype, layers=layers, heads=1, tweak_factor=i)
+    data_cp = edit_heatmap(data, model, dtype, hook_func, layers=layers, heads=1, tweak_factor=i)
 
     data_loc = "./"
     data_cp.to_csv(data_loc+full_title)
+
+def get_model(model_name:str, dtype, device):
+        if ("gpt" or "mistral" or "eleuther") in model_name:
+        #if ("gpt" in model_name) or ("mistral" in model_name) or ("eluthur" in model_name):
+            model = HookedTransformer.from_pretrained(model_name, 
+                                                    device=device,
+                                                    dtype=dtype)
+            print(model.cfg)
+        if "llama" in model_name:
+            tokenizer = LlamaTokenizer.from_pretrained(model_name)
+            """
+            hf_model = LlamaForCausalLM.from_pretrained(model_name, 
+                                                    low_cpu_mem_usage=True,
+                                                    torch_dtype=torch.float16
+                                                   )
+            """
+
+            #Load model into TransformerLens template
+            model = HookedTransformer.from_pretrained(model_name, 
+                                                   #  hf_model=hf_model, 
+                                                     tokenizer=tokenizer,
+                                                      device="cpu", 
+                                                    # device="cuda", 
+                                                     fold_ln=False, 
+                                                     center_writing_weights=False, 
+                                                     center_unembed=False,
+                                                    # n_devices=4
+                                                    ) #can load model onto multiple devices but have trouble running hooks
+        model = model.to("cuda" if torch.cuda.is_available() else "cpu")
+        print(model.cfg)
+        print(model.generate("The capital of Germany is", max_new_tokens=20, temperature=0))
+
+        #cache individual outputs of attention heads
+        model.cfg.use_attn_result = True
+        return model
+
+def namestr(obj, namespace):
+    return [str(name) for name in namespace if namespace[name] is obj]
 
 #Experiments
 if __name__=="__main__":
@@ -85,6 +124,7 @@ if __name__=="__main__":
     data = get_handwritten_data('../../data/')
     multi = get_multi_100('../../data/')
     multi_1000 = get_multi_1000('../../data/')
+    datasets = [multi_1000, data]
 
     models = [
     "meta-llama/Llama-2-7b-chat-hf",
@@ -109,6 +149,8 @@ if __name__=="__main__":
     #"meta-llama/Llama-2-13b-hf",
     ]
     
+    hook_types = [memory_tweaker_unembed_head_hook,
+                memory_tweaker_embed_head_hook]
 
     torch.set_grad_enabled(False)
 
@@ -119,60 +161,30 @@ if __name__=="__main__":
 
     #iterate over models
     for model_name in models:
-        if ("gpt" or "mistral" or "eleuther") in model_name:
-        #if ("gpt" in model_name) or ("mistral" in model_name) or ("eluthur" in model_name):
-            model = HookedTransformer.from_pretrained(model_name, 
-                                                    device=device,
-                                                    dtype=dtype)
-            print(model.cfg)
-        if "llama" in model_name:
-            tokenizer = LlamaTokenizer.from_pretrained(model_name)
-            """
-            hf_model = LlamaForCausalLM.from_pretrained(model_name, 
-                                                    low_cpu_mem_usage=True,
-                                                    torch_dtype=torch.float16
-                                                   )
-            print("Model:")
-            print(hf_model)
-            print("dir:")
-            print(dir(hf_model))
-            print("vars:")
-            print(vars(hf_model))
-            print("forward")
-            print(hf_model.forward)
-            """
+        #get model
+        model = get_model(model_name, dtype=dtype, device=device)
+
+        for d in datasets:
+            #iterate over hook types
+
+            for hook in hook_types:
+                #TODO geneate descriptive title/data output location
+                save_dir =namestr(d, globals())[0]+"/"+model_name+"/"+namestr(hook, globals())[0]+"/"
+                #make save_dir if it doesn't exist
+                os.makedirs(save_dir, exist_ok=True)
+                print(namestr(hook, globals())[0])
+                print(namestr(d, globals())[0])
+                print(model_name)
+
+                # define all tweak factor ranges we are interested in
+                tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+                for i in tweak_factors:
+                    full_title = save_dir+"tweak_"+str(i)+".csv"
+                    print(full_title)
 
 
-            #Load model into TransformerLens template
-            model = HookedTransformer.from_pretrained(model_name, 
-                                                   #  hf_model=hf_model, 
-                                                     tokenizer=tokenizer,
-                                                      device="cpu", 
-                                                    # device="cuda", 
-                                                     fold_ln=False, 
-                                                     center_writing_weights=False, 
-                                                     center_unembed=False,
-                                                    # n_devices=4
-                                                    ) #can load model onto multiple devices but have trouble running hooks
-        model = model.to("cuda" if torch.cuda.is_available() else "cpu")
-        print(model.cfg)
-        print(model.generate("The capital of Germany is", max_new_tokens=20, temperature=0))
+                    data_cp = edit_heatmap(data, model, dtype, hook, layers=model.cfg.n_layers, heads=1, tweak_factor=i)
 
-        #cache individual outputs of attention heads
-        model.cfg.use_attn_result = True
-
-        # define all tweak factor ranges we are interested in
-        tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-        tweak_factor_vary(tweak_factors, data, model, dtype=dtype, layers=model.cfg.n_layers, title=model_name+"_subject_edits_hand")
-        #tweak_factor_vary(tweak_factors, multi_1000, model, layers= model.cfg.n_layers, title=model_name+"_subject_edits_2wmh")
-
-    #tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-    #tweak_factor_vary(tweak_factors, data, gpt2_large, 36, title="gpt2_large_subject_edits_hand")
-
-    #tweak_factors = [6,7,8,9,10,11,12,13,14,15]
-    #tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-    #tweak_factor_vary(tweak_factors, multi_1000, gpt2_small, 12, title="gpt2_small_subject_edits_2wmh")
-
-    #tweak_factors = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-    #tweak_factor_vary(tweak_factors, multi_1000, gpt2_large, 36, title="gpt2_large_subject_edits_2wmh")
+                    data_cp.to_csv(full_title)
+                #tweak_factor_vary(tweak_factors=tweak_factors,data=d, model=model, dtype=dtype, hook_func=hook, layers=model.cfg.n_layers, title=model_name+"_subject_edits_hand")
 
