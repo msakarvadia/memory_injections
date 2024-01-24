@@ -2,13 +2,11 @@ import sys
 import os
 sys.path.append("../../")
 from data.load_data import get_handwritten_data, get_multi_100, get_multi_1000
-from utils import (reject_outliers, get_ans_prob, apply_edit,
+from utils import (reject_outliers, get_ans_prob, apply_edit, get_model, namestr, 
                 head_latent_space_projector,
                 memory_tweaker_unembed_head_hook,
                 memory_tweaker_embed_head_hook)
 import torch
-from transformer_lens import HookedTransformer, HookedTransformerConfig, FactoredMatrix, ActivationCache
-from transformers import LlamaForCausalLM, LlamaTokenizer
 
 
 
@@ -19,7 +17,6 @@ def edit_heatmap(data, model, dtype, hook_func, layers=12, heads=1, tweak_factor
   data_cp = data.copy()
   data_cp['answer_prob_exp'] = 0
   data_cp['answer_prob_obs'] = 0
-
 
   for l in range(layers):
       layer_answer_edit = 'ans_prob_obs_edit_layer'+str(l)
@@ -66,58 +63,7 @@ def edit_heatmap(data, model, dtype, hook_func, layers=12, heads=1, tweak_factor
         print("Average Answer probability difference after edit: ", (data_cp[layer_answer_edit] -data_cp['answer_prob_obs']).mean())
         print("Average Percent increase in Answer probability difference after edit: ", ((data_cp[layer_answer_edit] -data_cp['answer_prob_obs'])/ data_cp['answer_prob_obs']).mean() * 100)
 
-  print(data_cp)
   return data_cp
-
-# Function to vary the tweak factor
-def tweak_factor_vary(tweak_factors, data, model, layers, hook_func, dtype, title="gpt2_small_subject_edits"):
-  for i in tweak_factors:
-    full_title = title+"_tweakFactor_"+str(i)+".csv"
-    print(full_title)
-
-    data_cp = edit_heatmap(data, model, dtype, hook_func, layers=layers, heads=1, tweak_factor=i)
-
-    data_loc = "./"
-    data_cp.to_csv(data_loc+full_title)
-
-def get_model(model_name:str, dtype, device):
-        if ("gpt" or "mistral" or "eleuther") in model_name:
-        #if ("gpt" in model_name) or ("mistral" in model_name) or ("eluthur" in model_name):
-            model = HookedTransformer.from_pretrained(model_name, 
-                                                    device=device,
-                                                    dtype=dtype)
-            print(model.cfg)
-        if "llama" in model_name:
-            tokenizer = LlamaTokenizer.from_pretrained(model_name)
-            """
-            hf_model = LlamaForCausalLM.from_pretrained(model_name, 
-                                                    low_cpu_mem_usage=True,
-                                                    torch_dtype=torch.float16
-                                                   )
-            """
-
-            #Load model into TransformerLens template
-            model = HookedTransformer.from_pretrained(model_name, 
-                                                   #  hf_model=hf_model, 
-                                                     tokenizer=tokenizer,
-                                                      device="cpu", 
-                                                    # device="cuda", 
-                                                     fold_ln=False, 
-                                                     center_writing_weights=False, 
-                                                     center_unembed=False,
-                                                    # n_devices=4
-                                                    ) #can load model onto multiple devices but have trouble running hooks
-        model = model.to("cuda" if torch.cuda.is_available() else "cpu")
-        print(model.cfg)
-        print(model.generate("The capital of Germany is", max_new_tokens=20, temperature=0))
-
-        #cache individual outputs of attention heads
-        model.cfg.use_attn_result = True
-        return model
-
-def namestr(obj, namespace):
-    """ This function is how you grab the name of a variable"""
-    return [str(name) for name in namespace if namespace[name] is obj]
 
 #Experiments
 if __name__=="__main__":
@@ -126,9 +72,10 @@ if __name__=="__main__":
     data = get_handwritten_data('../../data/')
     multi = get_multi_100('../../data/')
     multi_1000 = get_multi_1000('../../data/')
-    datasets = [multi_1000, data]
+    datasets = [data, multi_1000]
 
     models = [
+    "gpt2-small",
     "gpt2-large",
     "meta-llama/Llama-2-7b-chat-hf",
     "meta-llama/Llama-2-7b-hf",
@@ -138,7 +85,6 @@ if __name__=="__main__":
     "EleutherAI/gpt-j-6B",
     "EleutherAI/gpt-neox-20b",
     "gpt2-xl",
-    "gpt2-small",
     ]
 
     models_need_more_compute = [

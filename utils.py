@@ -9,6 +9,9 @@ from fancy_einsum import einsum
 from functools import partial
 import transformer_lens.utils as utils
 
+from transformer_lens import HookedTransformer, HookedTransformerConfig, FactoredMatrix, ActivationCache
+from transformers import LlamaForCausalLM, LlamaTokenizer
+
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 def reject_outliers(data, cutoff=99):
@@ -172,3 +175,41 @@ def head_latent_space_projector(model, prompt, k_tokens, num_heads, aggregate_he
             print(model.to_string(topk_token_preds[1][0][i].reshape(k_tokens, 1)))
           print("---------")
 
+def get_model(model_name:str, dtype, device):
+        if ("gpt" or "mistral" or "eleuther") in model_name:
+        #if ("gpt" in model_name) or ("mistral" in model_name) or ("eluthur" in model_name):
+            model = HookedTransformer.from_pretrained(model_name, 
+                                                    device=device,
+                                                    dtype=dtype)
+            print(model.cfg)
+        if "llama" in model_name:
+            tokenizer = LlamaTokenizer.from_pretrained(model_name)
+            """
+            hf_model = LlamaForCausalLM.from_pretrained(model_name, 
+                                                    low_cpu_mem_usage=True,
+                                                    torch_dtype=torch.float16
+                                                   )
+            """
+
+            #Load model into TransformerLens template
+            model = HookedTransformer.from_pretrained(model_name, 
+                                                   #  hf_model=hf_model, 
+                                                     tokenizer=tokenizer,
+                                                      device="cpu", 
+                                                    # device="cuda", 
+                                                     fold_ln=False, 
+                                                     center_writing_weights=False, 
+                                                     center_unembed=False,
+                                                    # n_devices=4
+                                                    ) #can load model onto multiple devices but have trouble running hooks
+        model = model.to("cuda" if torch.cuda.is_available() else "cpu")
+        print(model.cfg)
+        print(model.generate("The capital of Germany is", max_new_tokens=20, temperature=0))
+
+        #cache individual outputs of attention heads
+        model.cfg.use_attn_result = True
+        return model
+
+def namestr(obj, namespace):
+    """ This function is how you grab the name of a variable"""
+    return [str(name) for name in namespace if namespace[name] is obj]
