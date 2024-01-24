@@ -35,14 +35,15 @@ def interpret_logits_as_vocab(model, logits, top_k=30):
   topk_token_vals_edit, topk_token_preds_edit = torch.topk(logits, top_k)
   return model.to_string(topk_token_preds_edit[0][-1])
 
-def apply_edit(model, extra_memory, prompt, tweak_factor=4, layer=10, head_num=0 ):
+def apply_edit(model, extra_memory, prompt, dtype, tweak_factor=4, layer=10, head_num=0 ):
   # Use functools.partial to create a temporary hook function with the position fixed
   temp_hook_fn = partial(memory_tweaker_head_hook,
                         extra_info= extra_memory, #"Barak Obama",
                         vocab_size=model.cfg.d_vocab, #TODO set this to be model.cfg.vocab_size
                         model=model,
                         tweak_factor=tweak_factor,
-                        head_num=head_num)
+                        head_num=head_num,
+                        dtype=dtype)
 
   #prompt = "The first black president of the United States was a member of the"
   #Get original logits
@@ -65,14 +66,15 @@ def memory_tweaker_head_hook(
     model: transformer_lens.HookedTransformer, #the model from which we get the unembedding matrix from
     vocab_size: int, #size of model vocabulary
     tweak_factor: float,
-    head_num: int #The number of the head we want to edit
+    head_num: int, #The number of the head we want to edit
+    dtype, #The torch dtype we want to use
     #cache: transformer_lens.ActivationCache #this is the
 ) -> Float[torch.Tensor, "batch pos d_model"]:
 
     tok_extra_info = model.to_tokens(extra_info, prepend_bos=False)
 
     #extra_memory = torch.zeros(vocab_size)
-    extra_memory = torch.zeros(vocab_size).to(device)
+    extra_memory = torch.zeros(vocab_size, dtype=dtype).to(device)
     for i in tok_extra_info:
       extra_memory[i] = 1
 

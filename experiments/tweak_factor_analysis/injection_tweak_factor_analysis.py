@@ -83,25 +83,28 @@ if __name__=="__main__":
     multi_1000 = get_multi_1000('../../data/')
 
     models = [
+    "meta-llama/Llama-2-7b-chat-hf",
+    "meta-llama/Llama-2-7b-hf",
     "EleutherAI/gpt-neo-125M",
     "EleutherAI/gpt-neo-1.3B",
     "EleutherAI/gpt-neo-2.7B",
     "EleutherAI/gpt-j-6B",
     "EleutherAI/gpt-neox-20b",
-    #"mistralai/Mistral-7B-v0.1", 
-    #"mistralai/Mistral-7B-Instruct-v0.1",
     "gpt2-xl",
-    "meta-llama/Llama-2-7b-hf",
     "gpt2-small",
     "gpt2-large",
+    ]
+
+    models_need_more_compute = [
+    #"mistralai/Mistral-7B-v0.1", 
+    #"mistralai/Mistral-7B-Instruct-v0.1",
     #"meta-llama/Llama-2-70b-chat-hf",
     #"meta-llama/Llama-2-70b-hf",
-    "meta-llama/Llama-2-7b-chat-hf",
-    "meta-llama/Llama-2-7b-hf",
     #"meta-llama/Llama-2-13b-chat-hf",
     #"meta-llama/Llama-2-13b-hf",
     #"meta-llama/Llama-2-13b-hf",
     ]
+    
 
     torch.set_grad_enabled(False)
 
@@ -120,6 +123,7 @@ if __name__=="__main__":
             print(model.cfg)
         if "llama" in model_name:
             tokenizer = LlamaTokenizer.from_pretrained(model_name)
+            """
             hf_model = LlamaForCausalLM.from_pretrained(model_name, 
                                                     low_cpu_mem_usage=True,
                                                     torch_dtype=torch.float16
@@ -132,6 +136,7 @@ if __name__=="__main__":
             print(vars(hf_model))
             print("forward")
             print(hf_model.forward)
+            """
 
 
             #Load model into TransformerLens template
