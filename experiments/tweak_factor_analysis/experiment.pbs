@@ -1,0 +1,20 @@
+#!/bin/bash 
+#PBS -l select=1
+#PBS -l walltime=72:00:00
+#PBS -q preemptable
+#PBS -l filesystems=home:grand
+#PBS -A superbert
+#PBS -M sakarvadia@uchicago.edu
+
+cd "/lus/grand/projects/SuperBERT/mansisak/knowledge_tracing/"
+echo "working dir: "
+pwd
+
+module load conda
+conda activate env/
+
+cd "/lus/grand/projects/SuperBERT/mansisak/knowledge_tracing/experiments/tweak_factor_analysis"
+echo "working dir: "
+pwd
+
+python injection_tweak_factor_analysis.py
