@@ -77,14 +77,14 @@ if __name__=="__main__":
     models = [
     "gpt2-small",
     "gpt2-large",
-    "meta-llama/Llama-2-7b-chat-hf",
-    "meta-llama/Llama-2-7b-hf",
+    "gpt2-xl",
     "EleutherAI/gpt-neo-125M",
     "EleutherAI/gpt-neo-1.3B",
     "EleutherAI/gpt-neo-2.7B",
     "EleutherAI/gpt-j-6B",
     "EleutherAI/gpt-neox-20b",
-    "gpt2-xl",
+    "meta-llama/Llama-2-7b-chat-hf",
+    "meta-llama/Llama-2-7b-hf",
     ]
 
     models_need_more_compute = [
@@ -102,6 +102,7 @@ if __name__=="__main__":
 
     torch.set_grad_enabled(False)
 
+    print("Total avalible GPUS:", torch.cuda.device_count())
     device = "cuda" if torch.cuda.is_available() else "cpu"
     dtype = torch.float32
 
@@ -114,9 +115,10 @@ if __name__=="__main__":
             #iterate over hook types
             for hook in hook_types:
                 #if model has tied embeddings, don't do both unembed + embed hook
-                if ("gpt2") in model_name and hook == memory_tweaker_unembed_head_hook:
+                if torch.equal( model.W_E, model.W_U.T) and hook == memory_tweaker_unembed_head_hook:
                     print("Model has tied embedding/unembedding, so we don't do redundant hooks")
                     continue
+
                 save_dir =namestr(d, globals())[0]+"/"+model_name+"/"+namestr(hook, globals())[0]+"/"
                 #make save_dir if it doesn't exist
                 os.makedirs(save_dir, exist_ok=True)
@@ -130,8 +132,6 @@ if __name__=="__main__":
                     if not os.path.exists(full_title):
                         print("We have not done this experiment. Computing now!")
                         data_cp = edit_heatmap(d, model, dtype, hook, layers=model.cfg.n_layers, heads=1, tweak_factor=i)
-                        print(data_cp)
-                        data_cp.to_csv("test.csv")
                         data_loc = "./"
                         data_cp.to_csv(data_loc+full_title)
                     else:
