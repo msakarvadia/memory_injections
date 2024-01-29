@@ -2,10 +2,12 @@ import sys
 import os
 sys.path.append("../../")
 from data.load_data import get_handwritten_data, get_multi_100, get_multi_1000
+import transformer_lens.utils as utils
 from utils import (reject_outliers, get_ans_prob, apply_edit, get_model, namestr, 
                 head_latent_space_projector,
                 memory_tweaker_unembed_head_hook,
-                memory_tweaker_embed_head_hook)
+                memory_tweaker_embed_head_hook,
+                memory_layer_encoding_hook)
 import torch
 
 
@@ -33,14 +35,31 @@ def edit_heatmap(data, model, dtype, hook_func, layers=12, heads=1, tweak_factor
         memory = data['explicit_entity'][i]
         prompt = data['obscure_sentence'][i]
         explicit_prompt = data['explicit_sentence'][i]
-        logits, patched_logits = apply_edit(model,
-                                          memory,
-                                          prompt,
-                                          hook_func=hook_func,
-                                          dtype=dtype,
-                                          tweak_factor=tweak_factor,
-                                          layer=l,
-                                          head_num=h)
+        if hook_func == memory_layer_encoding_hook:
+            #we encode memory using layer we are interested in injecting on
+            logits, cache = model.run_with_cache(memory, remove_batch_dim=True)
+            memory = cache[utils.get_act_name("attn_out", l)][-1]
+            
+            logits, patched_logits = apply_edit(model = model,
+                                              prompt = prompt,
+                                              extra_memory = memory,
+                                              hook_func=hook_func,
+                                              dtype=dtype,
+                                              tweak_factor=tweak_factor,
+                                              layer=l,
+                                              head_num=h,
+                                              )
+
+        else:
+            logits, patched_logits = apply_edit(model,
+                                              memory,
+                                              prompt,
+                                              hook_func=hook_func,
+                                              dtype=dtype,
+                                              tweak_factor=tweak_factor,
+                                              layer=l,
+                                              head_num=h,
+                                              )
 
         first_answer_tok = model.to_tokens(answer, prepend_bos=False)[0][0].item()
         answer_prob_before_mem = torch.nn.functional.softmax(logits[0][-1], dim=0)[first_answer_tok]
@@ -82,9 +101,9 @@ if __name__=="__main__":
     "EleutherAI/gpt-neo-1.3B",
     "EleutherAI/gpt-neo-2.7B",
     "EleutherAI/gpt-j-6B",
-    "EleutherAI/gpt-neox-20b",
     "meta-llama/Llama-2-7b-chat-hf",
     "meta-llama/Llama-2-7b-hf",
+    "EleutherAI/gpt-neox-20b",
     ]
 
     models_need_more_compute = [
@@ -97,8 +116,11 @@ if __name__=="__main__":
     #"meta-llama/Llama-2-13b-hf",
     ]
     
-    hook_types = [memory_tweaker_unembed_head_hook,
-                memory_tweaker_embed_head_hook]
+    hook_types = [
+                memory_tweaker_embed_head_hook,
+                memory_tweaker_unembed_head_hook,
+                memory_layer_encoding_hook,
+                ]
 
     torch.set_grad_enabled(False)
 

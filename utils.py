@@ -38,7 +38,7 @@ def interpret_logits_as_vocab(model, logits, top_k=30):
   topk_token_vals_edit, topk_token_preds_edit = torch.topk(logits, top_k)
   return model.to_string(topk_token_preds_edit[0][-1])
 
-def apply_edit(model, extra_memory, prompt, dtype, hook_func, tweak_factor=4, layer=10, head_num=0 ):
+def apply_edit(model, extra_memory, prompt, dtype, hook_func, tweak_factor=4, layer=10, head_num=0):
   # Use functools.partial to create a temporary hook function with the position fixed
   temp_hook_fn = partial(hook_func,
                         extra_info= extra_memory, #"Barak Obama",
@@ -46,7 +46,8 @@ def apply_edit(model, extra_memory, prompt, dtype, hook_func, tweak_factor=4, la
                         model=model,
                         tweak_factor=tweak_factor,
                         head_num=head_num,
-                        dtype=dtype)
+                        dtype=dtype,
+                        )
 
   #prompt = "The first black president of the United States was a member of the"
   #Get original logits
@@ -71,7 +72,6 @@ def memory_tweaker_unembed_head_hook(
     tweak_factor: float,
     head_num: int, #The number of the head we want to edit
     dtype, #The torch dtype we want to use
-    #cache: transformer_lens.ActivationCache #this is the
 ) -> Float[torch.Tensor, "batch pos d_model"]:
 
     tok_extra_info = model.to_tokens(extra_info, prepend_bos=False)
@@ -98,7 +98,6 @@ def memory_tweaker_embed_head_hook(
     tweak_factor: float,
     head_num: int, #The number of the head we want to edit
     dtype, #The torch dtype we want to use
-    #cache: transformer_lens.ActivationCache #this is the
 ) -> Float[torch.Tensor, "batch pos d_model"]:
 
     tok_extra_info = model.to_tokens(extra_info, prepend_bos=False)
@@ -113,6 +112,28 @@ def memory_tweaker_embed_head_hook(
     #add the extra_info embedded in latent space to hook_attn_out
     attn_result[:,:,head_num,:] = attn_result[:,:,head_num,:] + extra_memory * tweak_factor
 
+    return attn_result
+
+def memory_layer_encoding_hook(
+    attn_result: Float[torch.Tensor, "num_tokens num_heads d_model"],
+    hook: HookPoint, #name of layer where we inject memory
+    #extra_info: str, #the string that we tokenize and then inject into memory
+    extra_info: Float[torch.Tensor, "d_model"], #the string that we tokenize and then inject into memory
+    model: transformer_lens.HookedTransformer, #the model from which we get the unembedding matrix from
+    vocab_size: int, #size of model vocabulary
+    tweak_factor: float,
+    head_num: int, #The number of the head we want to edit
+    dtype,
+    #cache: transformer_lens.ActivationCache #this is the
+) -> Float[torch.Tensor, "batch pos d_model"]:
+
+    #logits, cache = model.run_with_cache(extra_info, remove_batch_dim=True)
+    #encoded_memory = cache[utils.get_act_name("attn_out", layer_encode)][-1]
+    #encoded_memory.to(device)
+
+    attn_result[:,:,head_num,:] = attn_result[:,:,head_num,:] + extra_info * tweak_factor
+
+    #return this edited hook_attn_out
     return attn_result
 
 def head_latent_space_projector(model, prompt, k_tokens, num_heads, aggregate_heads=True, intermediate_tokens=True):
