@@ -1,0 +1,22 @@
+#!/bin/bash 
+#PBS -l select=1
+#PBS -l walltime=24:00:00
+#PBS -q preemptable
+#PBS -l filesystems=home:eagle
+#PBS -A superbert
+#PBS -M sakarvadia@uchicago.edu
+
+cd "/grand/SuperBERT/mansisak/knowledge_tracing/"
+echo "working dir: "
+pwd
+
+module load conda
+conda activate env/
+
+cd "/grand/SuperBERT/mansisak/knowledge_tracing/experiments/tweak_factor_analysis"
+echo "working dir: "
+pwd
+
+CUDA_VISIBLE_DEVICES=0 python injection_tweak_factor_analysis.py --hook_name  memory_tweaker_unembed_head_hook &
+CUDA_VISIBLE_DEVICES=1 python injection_tweak_factor_analysis.py --hook_name  memory_tweaker_embed_head_hook &
+CUDA_VISIBLE_DEVICES=2 python injection_tweak_factor_analysis.py --hook_name  memory_layer_encoding_hook &

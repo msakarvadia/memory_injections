@@ -9,6 +9,7 @@ from utils import (reject_outliers, get_ans_prob, apply_edit, get_model, namestr
                 memory_tweaker_embed_head_hook,
                 memory_layer_encoding_hook)
 import torch
+import argparse
 
 
 
@@ -87,6 +88,16 @@ def edit_heatmap(data, model, dtype, hook_func, layers=12, heads=1, tweak_factor
 #Experiments
 if __name__=="__main__":
 
+    #set up arg parser
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--hook_name", 
+                        type=str, 
+                        choices=["memory_tweaker_embed_head_hook", "memory_tweaker_unembed_head_hook", "memory_layer_encoding_hook",],
+                        help="name of the hook function to use to encode memory for injection")
+    
+    args = parser.parse_args()
+    print("name of hook function: ", args.hook_name)
+
     #Get Data
     data = get_handwritten_data('../../data/')
     multi = get_multi_100('../../data/')
@@ -121,6 +132,8 @@ if __name__=="__main__":
                 memory_tweaker_unembed_head_hook,
                 memory_layer_encoding_hook,
                 ]
+
+    hook_types = [args.hook_name] #hacky way to accept cmd arg for hookname
 
     torch.set_grad_enabled(False)
 
