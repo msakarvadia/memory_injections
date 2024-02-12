@@ -92,7 +92,7 @@ if __name__=="__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--hook_name", 
                         type=str, 
-                        choices=["memory_tweaker_embed_head_hook", "memory_tweaker_unembed_head_hook", "memory_layer_encoding_hook",],
+                        choices=["embed", "unembed", "layer",],
                         help="name of the hook function to use to encode memory for injection")
     
     args = parser.parse_args()
@@ -133,7 +133,12 @@ if __name__=="__main__":
                 memory_layer_encoding_hook,
                 ]
 
-    hook_types = [args.hook_name] #hacky way to accept cmd arg for hookname
+    if args.hook_name == "embed":
+        hook_types = [memory_tweaker_embed_head_hook] #hacky way to accept cmd arg for hookname
+    if args.hook_name == "unembed":
+        hook_types = [memory_tweaker_unembed_head_hook] #hacky way to accept cmd arg for hookname
+    if args.hook_name == "layer":
+        hook_types = [memory_layer_encoding_hook] #hacky way to accept cmd arg for hookname
 
     torch.set_grad_enabled(False)
 
@@ -149,6 +154,7 @@ if __name__=="__main__":
         for d in datasets:
             #iterate over hook types
             for hook in hook_types:
+                print("name of hook: ", hook)
                 #if model has tied embeddings, don't do both unembed + embed hook
                 if torch.equal( model.W_E, model.W_U.T) and hook == memory_tweaker_unembed_head_hook:
                     print("Model has tied embedding/unembedding, so we don't do redundant hooks")

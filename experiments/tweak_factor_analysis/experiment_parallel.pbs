@@ -17,6 +17,6 @@ cd "/grand/SuperBERT/mansisak/knowledge_tracing/experiments/tweak_factor_analysi
 echo "working dir: "
 pwd
 
-CUDA_VISIBLE_DEVICES=0 python injection_tweak_factor_analysis.py --hook_name  memory_tweaker_unembed_head_hook &
-CUDA_VISIBLE_DEVICES=1 python injection_tweak_factor_analysis.py --hook_name  memory_tweaker_embed_head_hook &
-CUDA_VISIBLE_DEVICES=2 python injection_tweak_factor_analysis.py --hook_name  memory_layer_encoding_hook &
+CUDA_VISIBLE_DEVICES=0 python injection_tweak_factor_analysis.py --hook_name  unembed &
+CUDA_VISIBLE_DEVICES=1 python injection_tweak_factor_analysis.py --hook_name  embed &
+CUDA_VISIBLE_DEVICES=2 python injection_tweak_factor_analysis.py --hook_name  layer
